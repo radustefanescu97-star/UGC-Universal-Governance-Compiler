@@ -203,37 +203,37 @@ h3 {
 .terminal-top {
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  gap: 16px;
   height: 42px;
   padding: 0 16px;
   border-bottom: 1px solid var(--terminal-line);
   background: #171b1c;
 }
 
-.terminal-top span {
-  display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.terminal-top span:nth-child(1) {
-  background: var(--red);
-}
-
-.terminal-top span:nth-child(2) {
-  background: var(--amber);
-}
-
-.terminal-top span:nth-child(3) {
-  background: var(--green);
-}
-
-.terminal-top strong {
-  margin-left: auto;
+.terminal-title {
   color: #7f8988;
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.terminal-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.terminal-controls span {
+  display: inline-grid;
+  min-width: 22px;
+  height: 20px;
+  place-items: center;
+  border: 1px solid #343c3c;
+  border-radius: 3px;
+  color: #aab3b0;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
 }
 
 pre {
