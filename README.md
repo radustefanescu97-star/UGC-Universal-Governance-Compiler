@@ -80,9 +80,41 @@ The following are intentionally not part of V1:
 - Copilot or Windsurf targets;
 - external services, accounts, or hosted control planes.
 
-## Install From Source
+## Install
 
-UGC v1.0.0 is distributed as a source release. Prebuilt binaries are not published yet.
+UGC v1.0.1 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.1 release, then verify it with `ugc_1.0.1_checksums.txt`.
+
+Available archives:
+
+- `ugc_1.0.1_linux_amd64.tar.gz`
+- `ugc_1.0.1_linux_arm64.tar.gz`
+- `ugc_1.0.1_darwin_amd64.tar.gz`
+- `ugc_1.0.1_darwin_arm64.tar.gz`
+- `ugc_1.0.1_windows_amd64.zip`
+
+macOS binaries are cross-compiled and are not signed or notarized.
+
+Linux/macOS example:
+
+```bash
+tar -xzf ugc_1.0.1_linux_amd64.tar.gz
+./ugc_1.0.1_linux_amd64/ugc --help
+```
+
+Windows PowerShell example:
+
+```powershell
+Expand-Archive .\ugc_1.0.1_windows_amd64.zip
+.\ugc_1.0.1_windows_amd64\ugc.exe --help
+```
+
+Checksum verification on systems with `sha256sum`:
+
+```bash
+sha256sum -c ugc_1.0.1_checksums.txt
+```
+
+Source build remains available.
 
 Requirements:
 
