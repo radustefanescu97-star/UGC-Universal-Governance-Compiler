@@ -1,44 +1,234 @@
-# Universal Governance Compiler (UGC)
+# Universal Governance Compiler Architecture
 
-## The Problem
-AI agent environments (Google Antigravity, Cursor, GitHub Copilot, Windsurf) currently suffer from massive fragmentation. Each agent requires its own proprietary configuration format (e.g., `.agents/AGENTS.md`, `.cursorrules`, `.github/copilot-instructions.md`). This forces teams to maintain redundant rules, increasing the risk of compliance gaps when developers use different agents on the same repository.
+This document describes the implemented V1 architecture of Universal Governance Compiler (UGC).
 
-## The Solution
-The **Universal Governance Compiler (UGC)** is an open-source CLI tool and architectural framework. It establishes a **Single Source of Truth** for AI governance within a repository and compiles it down into the specific, vendor-locked formats required by individual agents.
+UGC is a local Go CLI that compiles one repository-local governance corpus into deterministic rule/configuration files for supported AI coding agents. It also audits generated artifacts for drift and provides local approval-packet helpers for scoped governance changes.
 
-### The Form of the Software
+## Problem
 
-The UGC should be a lightweight, zero-dependency CLI tool. 
-**Recommended Tech Stack:** **Go** (Golang) is ideal because it compiles into a single executable binary that works across Mac, Windows, and Linux without requiring a runtime (like Node or Python). Alternatively, **TypeScript/Node** is excellent for rapid prototyping and npm distribution.
+AI coding agents use different local rule surfaces. A team may need `AGENTS.md` for Codex, `.agents/` files for Antigravity, `CLAUDE.md` and Claude settings for Claude Code, and `.cursorrules` for Cursor.
 
-The software is structured into three distinct layers:
+Maintaining those files by hand creates avoidable risk:
 
-#### 1. The Ingestion Layer (The Source)
-The tool reads from a standard, agnostic directory (e.g., `.universal-governance/`).
-*   **Auto-Discovery (`ugc analyze`):** Optionally, UGC can scan the project structure (`package.json`, `go.mod`, CI workflows) to infer existing tech-stack constraints and pre-populate the ingestion directory.
-*   **`governance.md`**: Defines core constraints, truth order, intent classification, and stop conditions.
-*   **`worklog-schema.md`**: Defines the audit trail format.
-*   **`SOPs/`**: A folder containing standard operating procedures (e.g., "Deployment Protocol", "Code Review").
+- rules drift between tools;
+- approval gates can be copied inconsistently;
+- local generated artifacts can be edited without review;
+- developers cannot easily verify whether agent rules still match the source governance corpus.
 
-#### 2. The Translation Engine 
-This layer parses the agnostic markdown/JSON rules into an internal mapping, matching universal concepts (like "Gated Action") to the specific capabilities of target agents.
+UGC addresses this by treating `.universal-governance/` as the repository-local source and all agent-specific files as generated targets.
 
-#### 3. The Emitter Layer (The Compilers)
-The engine outputs the proprietary files into the repository. To guarantee compliance and prevent governance dilution, UGC intentionally restricts the community plugin system for V1 and ships with a closed, auditable set of official emitters:
-*   **Antigravity Emitter:** Generates `.agents/AGENTS.md` and compiles SOPs into distinct `.agents/skills/SKILL.md` directories.
-*   **Cursor Emitter:** Flattens and concatenates rules into a single `.cursorrules` file.
-*   **Copilot Emitter:** Formats guidelines into `.github/copilot-instructions.md`.
-*   **Claude Code Emitter:** Formats guidelines into `CLAUDE.md`.
+## V1 Shape
 
-#### 4. The Audit Layer (Drift Detection)
-*   **`ugc audit`:** A mandatory verification step that checks if the generated vendor-specific files (e.g., `.cursorrules`) match the exact hash of the compiled `.universal-governance/` source. This detects and rejects unauthorized manual edits to agent configs, protecting the Single Source of Truth.
+UGC V1 consists of:
 
-### Runtime Compliance: The Worklog Problem
-To ensure all agents respect a unified audit trail (e.g., `worklog.md`), the UGC injects **Runtime Injection Policies**. 
+- a Go CLI built with Cobra;
+- an embedded standard corpus under `core_embed/standard_corpus`;
+- an ingestion layer for `init` and read-only analysis;
+- a parser for the local governance corpus;
+- deterministic emitters for the supported targets;
+- build planning and transactional apply logic;
+- an audit engine;
+- corpus update preview/apply support;
+- approval-packet creation, hashing, and verification helpers.
 
-For highly capable agents like Antigravity, the UGC automatically compiles a specialized skill (e.g., `universal-worklog-sync/SKILL.md`). This skill acts as a mandatory runtime policy dictating: *"You may use your internal `task.md` or `walkthrough.md` for thinking, but before your execution ends, you MUST append your actions to the repository's main `worklog.md`."* 
+V1 does not include:
 
-## Open-Source Strategy & Security
-Because governance involves strict compliance, security, and access control, the UGC must be open-source.
-*   **Trust:** Organizations must be able to audit the compiler to ensure it doesn't introduce prompt-injection vulnerabilities or leak rules.
-*   **Community Adapters:** As new AI IDEs and agents emerge, the community can easily contribute new "Emitters" for them without changing the core engine.
+- git hook installation;
+- CI enforcement;
+- branch-protection mutation;
+- hosted services or accounts;
+- release automation;
+- targets beyond Codex, Antigravity, Claude Code, and Cursor.
+
+## Source Corpus
+
+`ugc init` writes the embedded standard corpus into:
+
+```text
+.universal-governance/
+```
+
+The corpus includes:
+
+- `AGENTS.md`;
+- canonical SOP markdown files under `SOPs/`;
+- manifest and corpus state metadata.
+
+The corpus is intended to be readable, reviewable, and repository-local. UGC treats it as the source for generated agent artifacts.
+
+## Parser And Model
+
+The parser reads markdown files from `.universal-governance/` and maps them into an internal governance model.
+
+The model keeps the base rules and SOP content separate enough for target emitters to format them according to each agent's expected local surface.
+
+Parser behavior is intentionally direct:
+
+- markdown files are read from known corpus locations;
+- parsing errors are returned explicitly;
+- generated output is deterministic for the same source corpus.
+
+## Emitters
+
+V1 ships with four official emitters.
+
+### Codex
+
+Codex output includes:
+
+```text
+AGENTS.md
+.codex/config.toml
+.codex/rules/ugc.rules
+```
+
+The Codex emitter maps governance concepts into project-local instructions and configuration/rules surfaces. UGC labels relevant Codex capabilities as `constrained` where local configuration can constrain behavior in trusted project contexts, and `advisory` where the target surface cannot provide a hard local constraint.
+
+### Antigravity
+
+Antigravity output includes:
+
+```text
+.agents/AGENTS.md
+.agents/skills/*/SKILL.md
+```
+
+The Antigravity emitter writes the main agent instructions and one skill file per SOP. Worklog-related capability can be represented as `native-skill`; other governance concepts may be `instructed` depending on target behavior.
+
+### Claude Code
+
+Claude Code output includes:
+
+```text
+CLAUDE.md
+.claude/settings.json
+```
+
+The Claude emitter writes human-readable instructions plus conservative deny rules in `.claude/settings.json`. V1 labels Claude governance as `constrained`, not absolute enforcement, because UGC does not emit or install a verified PreToolUse hook in V1.
+
+### Cursor
+
+Cursor output includes:
+
+```text
+.cursorrules
+```
+
+The Cursor emitter flattens the governance model into a single rules file. Cursor is labeled `instructed` in V1.
+
+## Build Flow
+
+`ugc build --dry-run` computes the same build plan as `ugc build` but does not write files.
+
+`ugc build`:
+
+1. reads the local corpus;
+2. generates target output in memory;
+3. checks whether target files are missing, unchanged, managed, or blocked by unmanaged existing files;
+4. refuses to overwrite unmanaged target files;
+5. applies generated artifacts through a local transaction where possible;
+6. writes the build manifest last.
+
+The manifest-last rule is important: a clean manifest should represent a successful generated-artifact apply, not a partially applied build.
+
+If the filesystem refuses rollback during a failed apply, UGC reports that state explicitly and does not write a clean manifest.
+
+## Restore Flow
+
+`ugc build --restore <PATH>` restores one exact generated artifact path.
+
+Restore is intentionally narrow:
+
+- the path must be an exact artifact path;
+- the path must be manifest-owned;
+- the artifact must still be generated by the current source corpus;
+- user/vendor files are refused.
+
+This avoids a broad force mode while still giving users a direct way to repair drift in UGC-owned generated files.
+
+## Audit Flow
+
+`ugc audit` checks:
+
+- source corpus structure;
+- generated-file drift;
+- missing generated files;
+- unexpected stale generated files;
+- build manifest consistency;
+- target capability coverage;
+- corpus/update state.
+
+Audit ownership is exact-path based. UGC owns artifacts such as:
+
+```text
+.claude/settings.json
+.codex/config.toml
+.codex/rules/ugc.rules
+```
+
+It does not treat normal vendor/user files under `.claude/` or user Codex rules under `.codex/rules/*.rules` as UGC-generated artifacts unless they are explicit UGC-owned paths.
+
+## Capability Labels
+
+UGC reports capability coverage with conservative labels:
+
+- `constrained`: the emitted target surface can constrain behavior within that tool's supported mechanisms;
+- `instructed`: UGC emits instructions, but runtime obedience is not treated as machine enforcement;
+- `advisory`: UGC can express guidance, but not a hard local constraint;
+- `native-skill`: the target supports a native skill-style representation used by UGC.
+
+These labels are part of the product contract. UGC should not claim stronger enforcement than a target actually supports.
+
+## Approval Packets
+
+The `ugc packet` command family supports local approval discipline:
+
+```bash
+ugc packet new
+ugc packet hash
+ugc packet verify
+```
+
+Approval packets are markdown documents that can define:
+
+- task id;
+- source truth;
+- target surface;
+- allowed actions;
+- forbidden actions;
+- stop conditions;
+- return gate.
+
+`ugc packet hash` prints a SHA-256 hash for a packet. `ugc packet verify` checks that an approval sentence matches the task id, packet path, current hash, and required boundary statements.
+
+This is local discipline, not identity signing or remote authorization.
+
+## Corpus Updates
+
+`ugc update --dry-run` previews what would change if the embedded standard corpus is synchronized into the local repository corpus.
+
+The update flow is designed to respect local modifications by comparing known official hashes and reporting skipped or changed files explicitly.
+
+## Security And Governance Boundaries
+
+UGC improves auditability of repository-local AI governance files. It does not guarantee that every third-party tool will obey instructions identically at runtime.
+
+V1 does not mutate:
+
+- `.git/hooks/`;
+- `.github/workflows/`;
+- branch protection rules;
+- remote repository settings;
+- cloud resources;
+- provider accounts;
+- production systems.
+
+Those surfaces require separate reviewed implementation and approval.
+
+## Licensing
+
+UGC is licensed under the Apache License 2.0.
+
+SPDX: `Apache-2.0`
+
+Copyright 2026 Radu Stefanescu
