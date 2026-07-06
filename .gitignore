@@ -2,11 +2,13 @@ promspace-sop-reference-pack-2026-07-04.zip
 promspace_governance/
 
 # Local agent governance and operational files
+/ugc
+/AGENTS.md
+/CLAUDE.md
+/.cursorrules
 .agents/
+/.claude/settings.json
+/.codex/
 .universal-governance/
 Plans/
 scripts/
-
-# Architecture and design documentation
-UGC_Architecture.md
-UGC_Vision_and_Roadmap.md
