@@ -82,7 +82,7 @@ The following are intentionally not part of V1:
 
 ## Install From Source
 
-Until tagged releases exist, build UGC from source.
+UGC v1.0.0 is distributed as a source release. Prebuilt binaries are not published yet.
 
 Requirements:
 
