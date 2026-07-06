@@ -1,10 +1,10 @@
 # Universal Governance Compiler
 
-Universal Governance Compiler (UGC) is a local CLI for teams that want one repository-level source of governance for multiple AI coding agents.
+Universal Governance Compiler (UGC) is a local CLI for teams and individuals who want one repository-level source of governance for multiple AI coding agents.
 
-AI tools do not read the same rule files. Codex, Antigravity, Claude Code, and Cursor each expect different local configuration surfaces. Without a compiler, teams either duplicate instructions by hand or accept that every agent may operate from a slightly different set of rules.
+AI tools do not read the same rule files. OpenAI Codex, Google Antigravity, Anthropic Claude Code, and Cursor by Anysphere each expect different local configuration surfaces. Without a compiler, users either duplicate instructions by hand or accept that every agent may operate from a slightly different set of rules.
 
-UGC takes the opposite approach: write governance once, compile it into the agent-specific files, and audit the generated output for drift.
+UGC takes the opposite approach: write governance once, compile it into agent-specific files, and audit the generated output for drift.
 
 ## What UGC Does
 
@@ -12,14 +12,14 @@ UGC gives a repository a local governance source under `.universal-governance/`,
 
 - OpenAI Codex: `AGENTS.md`, `.codex/config.toml`, `.codex/rules/ugc.rules`
 - Google Antigravity: `.agents/AGENTS.md`, `.agents/skills/*/SKILL.md`
-- Claude Code: `CLAUDE.md`, `.claude/settings.json`
-- Cursor: `.cursorrules`
+- Anthropic Claude Code: `CLAUDE.md`, `.claude/settings.json`
+- Cursor by Anysphere: `.cursorrules`
 
-It is designed for teams that care about approval gates, protected surfaces, stop conditions, worklog discipline, and repeatable governance across AI-assisted development tools.
+It is designed for people who care about approval gates, protected surfaces, stop conditions, worklog discipline, and repeatable governance across AI-assisted development tools.
 
 ## Why It Matters
 
-AI development is moving faster than the governance layer around it. Teams can already choose between multiple coding agents, IDE assistants, and local automation tools, but the operating rules for those tools are fragmented.
+AI development is moving faster than the governance layer around it. Teams and individuals can already choose between multiple coding agents, IDE assistants, and local automation tools, but the operating rules for those tools are fragmented.
 
 UGC makes governance portable at the repository level:
 
@@ -28,18 +28,53 @@ UGC makes governance portable at the repository level:
 - dry-run previews before writes;
 - audit checks for generated-file drift and missing artifacts;
 - narrow restore for exact UGC-owned generated files;
-- approval-packet hashing for scoped human approval workflows.
+- approval-packet hashing for scoped human approval workflows;
+- a standard SOP corpus that gives agents concrete operating discipline from the first `ugc init`.
 
 The goal is not to pretend every third-party agent has identical runtime controls. The goal is to make the governance surface explicit, reproducible, and auditable.
 
+## The Standard SOP Corpus
+
+The standard SOP corpus is the main differentiator in UGC. `ugc init` installs it into `.universal-governance/`; `ugc build` then compiles that corpus into the supported agents' local rule surfaces.
+
+This means UGC does not only generate empty config files. It gives a project a starting operating system for AI-assisted work: approval discipline, worklog memory, safe mutation boundaries, repo hygiene, release guardrails, and documentation accountability.
+
+The embedded corpus currently includes:
+
+- `UGC_AI_AGENTS_GOVERNANCE_SOP.md`: sets safe boundaries for AI-assisted work so agents do not silently redefine product truth, bypass approvals, or touch protected surfaces.
+- `UGC_APPROVAL_PACKET_SOP.md`: defines hash-bound approval packets so a short approval in chat can reference a complete implementation boundary by path and SHA-256 hash.
+- `UGC_CHECKLIST_SOP.md`: requires closure checklists so sessions do not end with hidden residual risks, unclear validation, or missing handoff details.
+- `UGC_CLARIFY_INTENT_SOP.md`: forces clarification before ambiguous requests are treated as permission to mutate files.
+- `UGC_COMMIT_DEPLOY_PUSH_GUARDRAILS_SOP.md`: defines guardrails before commit, push, deploy, or promotion work so unrelated changes and unsafe release actions do not get mixed together.
+- `UGC_ENGINEERING_SIMPLICITY_SOP.md`: keeps engineering explicit, boring, and auditable by discouraging unnecessary abstractions, hidden control flow, and clever but hard-to-review implementation.
+- `UGC_GOVERNANCE_CHANGE_SOP.md`: adds preflight and closure gates for governance changes so dependent artifacts are checked instead of assumed.
+- `UGC_ORCHESTRATION_SOP.md`: governs bounded parallel or delegated agent work and makes the orchestrator responsible for final synthesis and correctness.
+- `UGC_PORTABILITY_SOP.md`: helps preserve valuable local work through backup checkpoint assessment and fresh-environment readiness.
+- `UGC_RELEASE_SOP.md`: defines controlled release and promotion discipline, including separation between development and production surfaces.
+- `UGC_REPOSCAN_AND_BOOTSTRAP_SOP.md`: requires agents to identify the target surface, protected neighboring surfaces, applicable SOPs, and approval gates before material work.
+- `UGC_REPOSITORY_EXPLAINABILITY_SOP.md`: gives humans and agents a framework for understanding high-risk files, request flow, and extension points before debugging or refactoring.
+- `UGC_REPOSITORY_EXPLAINABILITY_AND_DOC_SYNC_SOP.md`: keeps documentation aligned with behavior, decisions, debugging lessons, and material changes.
+- `UGC_WORKLOG_AND_SESSION_SOP.md`: defines session history requirements so the project keeps a durable record of objective, files touched, approvals, validations, stop reasons, and residual risks.
+- `UGC_WORKLOG_SYNC_SKILL.md`: gives generated agent surfaces a runtime reminder to sync internal task notes into the project worklog before ending a material session.
+- `UGC_WORKTREE_DISCIPLINE_SOP.md`: keeps git worktrees and temporary workspaces clean, scoped, and recoverable.
+
+These SOPs are intentionally practical. They are not meant to slow down ordinary work; they are meant to make important work reviewable after the conversation window is gone.
+
+## Worklogs As Persistent Project Memory
+
+Worklogs act as persistent project memory for AI-assisted development. They record what happened across sessions: objectives, target surfaces, files touched, approvals, commands, validation results, stop reasons, and residual risks.
+
+That matters because AI agent conversations are temporary and fragmented. A repository worklog gives the next human or agent a durable trail of why a change happened, what was validated, what was deliberately deferred, and what must not be assumed.
+
+For teams, this improves handoff and accountability. For individuals, it reduces context loss when returning to a project days or weeks later.
+
 ## Current Status
 
-UGC V1 is a local Go CLI. It currently focuses on four official targets: Codex, Antigravity, Claude Code, and Cursor.
+UGC V1 is a local Go CLI. It currently focuses on four official targets: OpenAI Codex, Google Antigravity, Anthropic Claude Code, and Cursor by Anysphere.
 
 The following are intentionally not part of V1:
 
 - Git hooks or CI enforcement;
-- GitHub Pages presentation site;
 - prebuilt release binaries;
 - package-manager installation;
 - Copilot or Windsurf targets;
@@ -145,7 +180,7 @@ UGC includes a local approval-packet workflow for scoped changes. A packet can b
 
 The hash is SHA-256, part of the Secure Hash Standard family specified by NIST FIPS 180-4. UGC uses it for a practical local purpose: detecting whether the packet text changed after approval.
 
-This is not identity signing, legal attestation, or remote policy enforcement. It is a disciplined local guardrail for teams that want approval text, scope, allowed actions, forbidden actions, stop conditions, and return gates to stay tied to a specific document.
+This is not identity signing, legal attestation, or remote policy enforcement. It is a disciplined local guardrail for teams and individuals who want approval text, scope, allowed actions, forbidden actions, stop conditions, and return gates to stay tied to a specific document.
 
 ## Capability Labels
 
@@ -158,10 +193,10 @@ UGC reports target capabilities honestly because each agent exposes different co
 
 V1 examples:
 
-- Claude Code is `constrained` for conservative deny rules emitted in `.claude/settings.json`; UGC does not claim comprehensive hook-based enforcement in V1.
-- Codex is `constrained` for project-local approval/sandbox defaults and project rule files when the project layer is trusted; secret-read protection is `advisory` in V1.
-- Antigravity uses a mix of `native-skill` and `instructed`.
-- Cursor is `instructed` in V1.
+- Anthropic Claude Code is `constrained` for conservative deny rules emitted in `.claude/settings.json`; UGC does not claim comprehensive hook-based enforcement in V1.
+- OpenAI Codex is `constrained` for project-local approval/sandbox defaults and project rule files when the project layer is trusted; secret-read protection is `advisory` in V1.
+- Google Antigravity uses a mix of `native-skill` and `instructed`.
+- Cursor by Anysphere is `instructed` in V1.
 
 ## Design Principles
 
@@ -172,6 +207,7 @@ UGC is built around a few practical principles:
 - dry runs should be available before writes;
 - unmanaged local files should not be overwritten silently;
 - audits should identify drift instead of relying on trust;
+- worklogs should preserve operational memory outside transient agent conversations;
 - security and compliance claims should match the real enforcement surface.
 
 ## Limitations
@@ -184,9 +220,7 @@ Build application uses local rollback where the filesystem permits it. If the fi
 
 `ugc packet verify` is a local discipline aid. It is not a cryptographic identity system, not a signing service, and not a substitute for organizational approval policy.
 
-## Roadmap
-
-Future work may include additional agent targets, stronger repository self-defense, CI integration, release packaging, and a separate GitHub Pages presentation site. Those are outside V1 and should be implemented through separate reviewed changes.
+Additional targets, release packaging, and stronger repository self-defense remain separate future work.
 
 ## Support And Contact
 
