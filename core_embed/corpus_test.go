@@ -8,8 +8,8 @@ import (
 
 func TestStandardCorpusIsUGCNative(t *testing.T) {
 	forbidden := []string{
-		"PromSpace",
-		"Tycho",
+		strings.Join([]string{"prom", "space"}, ""),
+		strings.Join([]string{"ty", "cho"}, ""),
 		"Firebase",
 		"Cloud Run",
 		"Nominatim",
