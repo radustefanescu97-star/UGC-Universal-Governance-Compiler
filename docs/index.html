@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Universal Governance Compiler</title>
+    <meta name="description" content="Universal Governance Compiler is a local CLI that compiles one repository governance source into rule surfaces for multiple AI coding agents.">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Universal Governance Compiler home">
+        <span class="brand-mark">UGC</span>
+        <span>Universal Governance Compiler</span>
+      </a>
+      <nav class="nav" aria-label="Primary navigation">
+        <a href="#corpus">Corpus</a>
+        <a href="#install">Install</a>
+        <a href="#limits">Limits</a>
+        <a href="https://github.com/radustefanescu97-star/UGC-Universal-Governance-Compiler">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Local governance for AI-assisted development</p>
+          <h1>Universal Governance Compiler</h1>
+          <p class="lead">
+            Write repository governance once. Compile it into local rule and configuration
+            surfaces for OpenAI Codex, Google Antigravity, Anthropic Claude Code, and Cursor by Anysphere.
+          </p>
+          <div class="hero-actions" aria-label="Primary actions">
+            <a class="button primary" href="https://github.com/radustefanescu97-star/UGC-Universal-Governance-Compiler/releases/tag/v1.0.1">Download v1.0.1</a>
+            <a class="button secondary" href="https://github.com/radustefanescu97-star/UGC-Universal-Governance-Compiler">View Source</a>
+          </div>
+        </div>
+
+        <div class="terminal-shell" aria-label="UGC workflow terminal">
+          <div class="terminal-top">
+            <span></span>
+            <span></span>
+            <span></span>
+            <strong>ugc</strong>
+          </div>
+          <pre><code><span class="prompt">$</span> ugc init
+created .universal-governance/
+
+<span class="prompt">$</span> ugc build --dry-run
+planned: Codex, Antigravity, Claude Code, Cursor
+
+<span class="prompt">$</span> ugc build
+wrote generated governance targets
+
+<span class="prompt">$</span> ugc audit
+source validity: ok
+drift: none detected</code></pre>
+        </div>
+      </section>
+
+      <section class="statement">
+        <p>
+          AI coding tools do not read the same rule files. UGC keeps the operating rules in one
+          repository-local corpus, then emits deterministic target files for each supported agent.
+          The point is not magic. The point is repeatable, inspectable governance.
+        </p>
+      </section>
+
+      <section class="section" id="what">
+        <div class="section-heading">
+          <p class="eyebrow">What It Does</p>
+          <h2>One source, four target surfaces.</h2>
+        </div>
+        <div class="target-grid">
+          <article>
+            <h3>OpenAI Codex</h3>
+            <p><code>AGENTS.md</code>, <code>.codex/config.toml</code>, and project rule files.</p>
+          </article>
+          <article>
+            <h3>Google Antigravity</h3>
+            <p><code>.agents/AGENTS.md</code> and native skill-style SOP files.</p>
+          </article>
+          <article>
+            <h3>Anthropic Claude Code</h3>
+            <p><code>CLAUDE.md</code> plus conservative local settings.</p>
+          </article>
+          <article>
+            <h3>Cursor by Anysphere</h3>
+            <p>A generated <code>.cursorrules</code> surface for repository guidance.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section split">
+        <div class="section-heading">
+          <p class="eyebrow">Compiler Shape</p>
+          <h2>Governance becomes a build artifact.</h2>
+          <p>
+            UGC treats <code>.universal-governance/</code> as source truth and generated agent files
+            as outputs that can be rebuilt, reviewed, and audited for drift.
+          </p>
+        </div>
+        <div class="flow-panel" aria-label="UGC compile flow">
+          <div class="flow-node source">
+            <span>Source</span>
+            <strong>.universal-governance/</strong>
+          </div>
+          <div class="flow-arrow">compile</div>
+          <div class="flow-node targets">
+            <span>Targets</span>
+            <strong>Codex / Antigravity / Claude Code / Cursor</strong>
+          </div>
+          <div class="flow-arrow">audit</div>
+          <div class="flow-node audit">
+            <span>Check</span>
+            <strong>drift / missing files / coverage</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="corpus">
+        <div class="section-heading">
+          <p class="eyebrow">Standard SOP Corpus</p>
+          <h2>The corpus is the product's operating layer.</h2>
+          <p>
+            UGC does not generate empty config shells. It installs a practical starting corpus for
+            approval gates, protected surfaces, stop conditions, release discipline, worktree hygiene,
+            explainability, and session closure.
+          </p>
+        </div>
+        <div class="corpus-grid">
+          <article>
+            <h3>Approval Discipline</h3>
+            <p>Hash-bound approval packets tie a short approval sentence to a specific plan, scope, and return gate.</p>
+          </article>
+          <article>
+            <h3>Engineering Simplicity</h3>
+            <p>The corpus favors explicit, reviewable changes over clever machinery that hides behavior.</p>
+          </article>
+          <article>
+            <h3>Auditability</h3>
+            <p>Worklogs, checklists, and drift checks preserve the trail of what changed and what was validated.</p>
+          </article>
+          <article>
+            <h3>Release Guardrails</h3>
+            <p>Commit, push, release, and deploy surfaces are treated as separate actions with clear stop conditions.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section split">
+        <div class="section-heading">
+          <p class="eyebrow">Persistent Memory</p>
+          <h2>Worklogs keep context after the chat window disappears.</h2>
+          <p>
+            AI agent sessions are temporary. Repository worklogs preserve objectives, approvals,
+            touched files, validation results, stop reasons, and residual risks so the next session
+            does not have to guess.
+          </p>
+        </div>
+        <div class="memory-panel">
+          <div>
+            <span>01</span>
+            <strong>Intent</strong>
+            <p>What was requested and what was explicitly out of scope.</p>
+          </div>
+          <div>
+            <span>02</span>
+            <strong>Evidence</strong>
+            <p>Commands, tests, hashes, commits, and release URLs.</p>
+          </div>
+          <div>
+            <span>03</span>
+            <strong>Residual Risk</strong>
+            <p>What is known, deferred, or deliberately not claimed.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section install" id="install">
+        <div class="section-heading">
+          <p class="eyebrow">Install</p>
+          <h2>Download a binary or build from source.</h2>
+        </div>
+        <div class="install-grid">
+          <div class="download-panel">
+            <h3>Prebuilt release</h3>
+            <p>UGC v1.0.1 includes GitHub Release archives for Linux, macOS, and Windows.</p>
+            <a class="button primary" href="https://github.com/radustefanescu97-star/UGC-Universal-Governance-Compiler/releases/tag/v1.0.1">Open Releases</a>
+            <p class="fine-print">macOS artifacts are cross-compiled; see release notes for platform caveats.</p>
+          </div>
+          <div class="code-panel">
+            <pre><code>git clone https://github.com/radustefanescu97-star/UGC-Universal-Governance-Compiler.git
+cd UGC-Universal-Governance-Compiler
+go build -o ugc .
+./ugc --help</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="limits">
+        <div class="section-heading">
+          <p class="eyebrow">Limitations</p>
+          <h2>UGC is honest about its control surface.</h2>
+        </div>
+        <div class="limits-list">
+          <p>UGC verifies generated governance artifacts. It does not promise that every third-party agent behaves identically at runtime.</p>
+          <p>V1 does not install git hooks, mutate CI, configure branch protections, deploy a service, or add a hosted control plane.</p>
+          <p>Approval packet hashing is local discipline. It is not identity signing or a substitute for organizational policy.</p>
+        </div>
+      </section>
+
+      <section class="closing">
+        <h2>Governance should be portable, reviewable, and close to the repository.</h2>
+        <div class="hero-actions">
+          <a class="button primary" href="https://github.com/radustefanescu97-star/UGC-Universal-Governance-Compiler">GitHub Repository</a>
+          <a class="button secondary" href="https://github.com/radustefanescu97-star/UGC-Universal-Governance-Compiler/issues">Issues</a>
+        </div>
+        <p class="fine-print">Apache-2.0. Maintained by <a href="https://github.com/radustefanescu97-star">Radu Stefanescu</a> / <a href="https://x.com/radu_st1">@radu_st1</a></p>
+      </section>
+    </main>
+  </body>
+</html>
