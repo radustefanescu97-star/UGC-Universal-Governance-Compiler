@@ -169,6 +169,7 @@ func TestApplyBuildPlanWritesAllV1ArtifactsAndManifest(t *testing.T) {
 	for _, path := range []string{
 		"AGENTS.md",
 		".agents/AGENTS.md",
+		".agents/skills/ugc-governance/SKILL.md",
 		"CLAUDE.md",
 		".claude/settings.json",
 		".codex/config.toml",
@@ -196,6 +197,9 @@ func TestApplyBuildPlanWritesAllV1ArtifactsAndManifest(t *testing.T) {
 	}
 	if !containsArtifact(manifest.Artifacts, ".codex/config.toml", "codex") {
 		t.Fatalf("manifest missing Codex config artifact: %+v", manifest.Artifacts)
+	}
+	if !containsArtifact(manifest.Artifacts, ".agents/skills/ugc-governance/SKILL.md", "codex") {
+		t.Fatalf("manifest missing Codex governance skill artifact: %+v", manifest.Artifacts)
 	}
 	if !containsArtifact(manifest.Artifacts, ".claude/settings.json", "claude") {
 		t.Fatalf("manifest missing Claude settings artifact: %+v", manifest.Artifacts)

@@ -47,7 +47,10 @@ func (e *Emitter) Emit(g *models.Governance, targetDir string) error {
 	if err := writeCodexConfig(g, targetDir); err != nil {
 		return err
 	}
-	return writeCodexRules(g, targetDir)
+	if err := writeCodexRules(g, targetDir); err != nil {
+		return err
+	}
+	return writeCodexGovernanceSkill(g, targetDir)
 }
 
 func rewriteCodexSourcePaths(content string) string {
@@ -90,6 +93,48 @@ func writeCodexRules(g *models.Governance, targetDir string) error {
 	}
 
 	path := filepath.Join(targetDir, ".codex", "rules", "ugc.rules")
+	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
+		return err
+	}
+	return os.WriteFile(path, []byte(content.String()), 0644)
+}
+
+func writeCodexGovernanceSkill(g *models.Governance, targetDir string) error {
+	var content strings.Builder
+	content.WriteString("---\n")
+	content.WriteString("name: ugc-governance\n")
+	content.WriteString("description: Use for UGC-governed Codex work involving approvals, protected surfaces, releases, commits, pushes, audits, or worklog closure.\n")
+	content.WriteString("---\n\n")
+	content.WriteString("# UGC Governance Skill\n\n")
+	content.WriteString(fmt.Sprintf("UGC-Source-Hash: `%s`\n\n", g.SourceHash))
+	content.WriteString("This repo-local Codex skill provides the workflow layer for Universal Governance Compiler projects. It complements `AGENTS.md` and `.codex/rules/ugc.rules`; it does not replace either surface.\n\n")
+	content.WriteString("## Canonical Sources\n\n")
+	content.WriteString("- Repository guidance: `AGENTS.md`\n")
+	content.WriteString("- Governance corpus: `.universal-governance/`\n")
+	content.WriteString("- Corpus entrypoint: `.universal-governance/AGENTS.md`\n")
+	content.WriteString("- SOP index: `.universal-governance/SOPs/README.md`\n")
+	content.WriteString("- Build manifest: `.universal-governance/build_manifest.json`\n\n")
+	content.WriteString("## Instructions\n\n")
+	content.WriteString("1. Before material repository changes, read `AGENTS.md`, `.universal-governance/AGENTS.md`, and `.universal-governance/SOPs/README.md`.\n")
+	content.WriteString("2. For architecture, governance, release, commit, push, deploy, destructive, or protected-surface work, read the relevant SOPs before acting.\n")
+	content.WriteString("3. For approval-gated work, use the hash-bound approval packet flow from `.universal-governance/SOPs/UGC_APPROVAL_PACKET_SOP.md`.\n")
+	content.WriteString("4. Use `ugc build --dry-run`, `ugc build`, `ugc audit`, and `ugc packet verify` when they are relevant to the requested governance task.\n")
+	content.WriteString("5. Stop and report if approval text, packet hash, source truth, local worktree state, generated artifacts, or validation results conflict with the requested action.\n")
+	content.WriteString("6. Before ending a material session, record required evidence in `Plans/worklog.md` when the active SOP requires worklog closure.\n\n")
+	content.WriteString("## High-Value SOPs\n\n")
+	for _, name := range []string{
+		"UGC_REPOSCAN_AND_BOOTSTRAP_SOP.md",
+		"UGC_APPROVAL_PACKET_SOP.md",
+		"UGC_GOVERNANCE_CHANGE_SOP.md",
+		"UGC_COMMIT_DEPLOY_PUSH_GUARDRAILS_SOP.md",
+		"UGC_RELEASE_SOP.md",
+		"UGC_WORKLOG_AND_SESSION_SOP.md",
+		"UGC_WORKTREE_DISCIPLINE_SOP.md",
+	} {
+		content.WriteString(fmt.Sprintf("- `.universal-governance/SOPs/%s`\n", name))
+	}
+
+	path := filepath.Join(targetDir, ".agents", "skills", "ugc-governance", "SKILL.md")
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return err
 	}

@@ -64,7 +64,7 @@ func TargetCapabilityMatrix() map[string]map[string]string {
 			"cursor":      "constrained",
 		},
 		"worklog_duty": {
-			"codex":       "instructed",
+			"codex":       "native-skill",
 			"antigravity": "native-skill",
 			"claude":      "instructed",
 			"cursor":      "instructed",
@@ -297,6 +297,8 @@ func equalStrings(a, b []string) bool {
 func targetForArtifact(path string) string {
 	switch {
 	case path == "AGENTS.md":
+		return "codex"
+	case path == ".agents/skills/ugc-governance/SKILL.md":
 		return "codex"
 	case path == ".agents/AGENTS.md" || strings.HasPrefix(path, ".agents/skills/"):
 		return "antigravity"

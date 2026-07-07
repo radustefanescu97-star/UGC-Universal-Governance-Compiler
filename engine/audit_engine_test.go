@@ -27,6 +27,9 @@ func TestAuditProjectCleanGeneratedArtifacts(t *testing.T) {
 	if !containsString(result.ExpectedArtifacts, "AGENTS.md") {
 		t.Fatalf("expected Codex artifact in audit paths: %v", result.ExpectedArtifacts)
 	}
+	if !containsString(result.ExpectedArtifacts, ".agents/skills/ugc-governance/SKILL.md") {
+		t.Fatalf("expected Codex governance skill artifact in audit paths: %v", result.ExpectedArtifacts)
+	}
 }
 
 func TestAuditProjectDetectsModifiedGeneratedFile(t *testing.T) {
@@ -105,6 +108,23 @@ func TestAuditProjectDetectsMissingCodexArtifact(t *testing.T) {
 	}
 	if !hasDrift(result, "AGENTS.md") {
 		t.Fatalf("expected missing Codex AGENTS.md drift, got %+v", result.Drift)
+	}
+}
+
+func TestAuditProjectDetectsMissingCodexGovernanceSkill(t *testing.T) {
+	root := t.TempDir()
+	writeAuditSource(t, root)
+	buildAuditOutputs(t, root)
+	if err := os.Remove(filepath.Join(root, ".agents", "skills", "ugc-governance", "SKILL.md")); err != nil {
+		t.Fatalf("remove Codex governance skill failed: %v", err)
+	}
+
+	result, err := AuditProject(root)
+	if err != nil {
+		t.Fatalf("AuditProject failed: %v", err)
+	}
+	if !hasDrift(result, ".agents/skills/ugc-governance/SKILL.md") {
+		t.Fatalf("expected missing Codex governance skill drift, got %+v", result.Drift)
 	}
 }
 

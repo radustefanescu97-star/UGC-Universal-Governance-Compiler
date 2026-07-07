@@ -104,4 +104,31 @@ func TestEmitter(t *testing.T) {
 	if string(rulesData) != string(rulesData2) {
 		t.Fatal("ugc.rules output is not deterministic")
 	}
+
+	skillData, err := os.ReadFile(filepath.Join(tmpDir, ".agents", "skills", "ugc-governance", "SKILL.md"))
+	if err != nil {
+		t.Fatalf("Expected .agents/skills/ugc-governance/SKILL.md to exist: %v", err)
+	}
+	skillContent := string(skillData)
+	for _, want := range []string{
+		"---\nname: ugc-governance\n",
+		"description: Use for UGC-governed Codex work",
+		"UGC-Source-Hash: `testhash123`",
+		"`.universal-governance/SOPs/UGC_APPROVAL_PACKET_SOP.md`",
+		"Plans/worklog.md",
+	} {
+		if !strings.Contains(skillContent, want) {
+			t.Errorf("ugc-governance skill missing %q", want)
+		}
+	}
+	if strings.HasPrefix(skillContent, "<!-- UGC-Source-Hash:") {
+		t.Fatal("ugc-governance skill must start with Codex skill frontmatter, not source hash comment")
+	}
+	skillData2, err := os.ReadFile(filepath.Join(tmpDir2, ".agents", "skills", "ugc-governance", "SKILL.md"))
+	if err != nil {
+		t.Fatalf("Expected second .agents/skills/ugc-governance/SKILL.md to exist: %v", err)
+	}
+	if string(skillData) != string(skillData2) {
+		t.Fatal("ugc-governance skill output is not deterministic")
+	}
 }

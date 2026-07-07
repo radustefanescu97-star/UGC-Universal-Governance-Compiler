@@ -80,9 +80,10 @@ Codex output includes:
 AGENTS.md
 .codex/config.toml
 .codex/rules/ugc.rules
+.agents/skills/ugc-governance/SKILL.md
 ```
 
-The Codex emitter maps governance concepts into project-local instructions and configuration/rules surfaces. UGC labels relevant Codex capabilities as `constrained` where local configuration can constrain behavior in trusted project contexts, and `advisory` where the target surface cannot provide a hard local constraint.
+The Codex emitter maps governance concepts into project-local instructions, configuration/rules surfaces, and a repo-local governance skill. UGC labels relevant Codex capabilities as `constrained` where local configuration can constrain behavior in trusted project contexts, `native-skill` where the generated Codex skill carries the workflow, and `advisory` where the target surface cannot provide a hard local constraint.
 
 ### Antigravity
 
@@ -164,6 +165,7 @@ Audit ownership is exact-path based. UGC owns artifacts such as:
 
 ```text
 .claude/settings.json
+.agents/skills/ugc-governance/SKILL.md
 .codex/config.toml
 .codex/rules/ugc.rules
 .cursor/hooks.json

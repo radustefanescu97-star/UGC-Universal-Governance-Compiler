@@ -80,6 +80,7 @@ func TestBuildManifestForOutputs(t *testing.T) {
 	mustWrite(t, filepath.Join(tmpDir, "AGENTS.md"), "codex")
 	mustWrite(t, filepath.Join(tmpDir, ".agents", "AGENTS.md"), "agents")
 	mustWrite(t, filepath.Join(tmpDir, ".agents", "skills", "ugc-worklog-sync", "SKILL.md"), "worklog")
+	mustWrite(t, filepath.Join(tmpDir, ".agents", "skills", "ugc-governance", "SKILL.md"), "codex governance")
 	mustWrite(t, filepath.Join(tmpDir, "CLAUDE.md"), "claude")
 	mustWrite(t, filepath.Join(tmpDir, ".claude", "settings.json"), "claude settings")
 	mustWrite(t, filepath.Join(tmpDir, ".codex", "config.toml"), "codex config")
@@ -95,14 +96,20 @@ func TestBuildManifestForOutputs(t *testing.T) {
 	if manifest.SourceHash != "sourcehash" {
 		t.Fatalf("unexpected source hash %q", manifest.SourceHash)
 	}
-	if len(manifest.Artifacts) != 10 {
-		t.Fatalf("expected 10 artifacts, got %d", len(manifest.Artifacts))
+	if len(manifest.Artifacts) != 11 {
+		t.Fatalf("expected 11 artifacts, got %d", len(manifest.Artifacts))
 	}
 	if !containsArtifact(manifest.Artifacts, "AGENTS.md", "codex") {
 		t.Fatalf("expected Codex AGENTS.md artifact, got %+v", manifest.Artifacts)
 	}
+	if !containsArtifact(manifest.Artifacts, ".agents/skills/ugc-governance/SKILL.md", "codex") {
+		t.Fatalf("expected Codex governance skill artifact, got %+v", manifest.Artifacts)
+	}
 	if !containsArtifact(manifest.Artifacts, ".codex/rules/ugc.rules", "codex") {
 		t.Fatalf("expected Codex rules artifact, got %+v", manifest.Artifacts)
+	}
+	if !containsArtifact(manifest.Artifacts, ".agents/skills/ugc-worklog-sync/SKILL.md", "antigravity") {
+		t.Fatalf("expected Antigravity skill artifact, got %+v", manifest.Artifacts)
 	}
 	if !containsArtifact(manifest.Artifacts, ".claude/settings.json", "claude") {
 		t.Fatalf("expected Claude settings artifact, got %+v", manifest.Artifacts)
@@ -142,6 +149,9 @@ func TestCapabilityMatrixHonestV1Labels(t *testing.T) {
 	}
 	if matrix["secret_read_protection"]["cursor"] != "constrained" {
 		t.Fatalf("expected Cursor secret read protection to be constrained, got %q", matrix["secret_read_protection"]["cursor"])
+	}
+	if matrix["worklog_duty"]["codex"] != "native-skill" {
+		t.Fatalf("expected Codex worklog duty to be native-skill, got %q", matrix["worklog_duty"]["codex"])
 	}
 }
 
