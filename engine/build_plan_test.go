@@ -142,7 +142,7 @@ func TestApplyBuildPlanWritesAllV1ArtifactsAndManifest(t *testing.T) {
 	root := t.TempDir()
 	generated := t.TempDir()
 	gov := &models.Governance{
-		BaseRules:  "Approval Gate: ask for aprobare.\nProtected Surfaces: stay in scope.\nWorklog: update Plans/worklog.md.",
+		BaseRules:  "Approval Gate: ask for approval.\nProtected Surfaces: stay in scope.\nWorklog: update Plans/worklog.md.",
 		SourceHash: "sourcehash",
 		SOPs: []models.SOP{
 			{Name: "UGC_TEST_SOP.md", Content: "Stop Conditions: stop on conflict.\nDestructive action warning: no destructive write without approval.\nWorklog duty: append evidence."},

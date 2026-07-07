@@ -119,7 +119,7 @@ func deriveManifestConcepts(relPath string, data []byte, sopIDs, criticalRules, 
 	}
 
 	lower := strings.ToLower(string(data))
-	if strings.Contains(lower, "approval") || strings.Contains(lower, "aprobare") || strings.Contains(lower, "aproval") {
+	if strings.Contains(lower, "approval") || strings.Contains(lower, "aproval") {
 		criticalRules["approval_gates"] = true
 		approvalGates["human_approval_literal"] = true
 	}

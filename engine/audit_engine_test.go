@@ -183,7 +183,7 @@ func TestAuditProjectDetectsMissingBuildManifest(t *testing.T) {
 
 func writeAuditSource(t *testing.T, root string) {
 	t.Helper()
-	mustWrite(t, filepath.Join(root, GovernanceDir, "AGENTS.md"), "# Root Rules\n\nApproval Gate: ask for aprobare.\nProtected Surfaces: respect scope.\nRead `SOPs/README.md`.\n")
+	mustWrite(t, filepath.Join(root, GovernanceDir, "AGENTS.md"), "# Root Rules\n\nApproval Gate: ask for approval.\nProtected Surfaces: respect scope.\nRead `SOPs/README.md`.\n")
 	mustWrite(t, filepath.Join(root, GovernanceDir, "SOPs", "README.md"), "# SOP Index\n\n- UGC_TEST_SOP.md\n")
 	mustWrite(t, filepath.Join(root, GovernanceDir, "SOPs", "UGC_TEST_SOP.md"), "# Test SOP\n\nStop Conditions: stop on conflict.\nDestructive action warning: no destructive action without approval.\nWorklog duty: append evidence.\n")
 }

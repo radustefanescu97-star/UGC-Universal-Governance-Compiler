@@ -81,7 +81,7 @@ func ApprovalPacketTemplate(opts ApprovalPacketOptions) string {
 	b.WriteString("```\n\n")
 	b.WriteString("Approval sentence:\n\n")
 	b.WriteString("```text\n")
-	fmt.Fprintf(&b, "aprobare pentru executarea %s, conform approval packetului %s SHA256 <HASH>. Scope-ul, allowed actions, forbidden actions, stop conditions si Return Gate raman exact cele din packet. Fara actiuni in afara packetului.\n", taskID, packetPath)
+	fmt.Fprintf(&b, "approval for executing %s, according to approval packet %s SHA256 <HASH>. Scope, allowed actions, forbidden actions, stop conditions, and Return Gate remain exactly as defined in the packet. No actions outside the packet are authorized.\n", taskID, packetPath)
 	b.WriteString("```\n")
 	return b.String()
 }
@@ -129,7 +129,7 @@ func VerifyApprovalPacket(packetPath, approval string) ApprovalVerification {
 	}
 
 	normalizedApproval := normalizeApproval(approval)
-	if !strings.Contains(normalizedApproval, "aprobare") && !strings.Contains(normalizedApproval, "aproval") {
+	if !hasApprovalDecisionLiteral(normalizedApproval) {
 		result.Reasons = append(result.Reasons, "approval literal missing")
 	}
 	if parsed.TaskID != "" && !strings.Contains(normalizedApproval, strings.ToLower(parsed.TaskID)) {
@@ -184,9 +184,13 @@ func hasExactBoundaryStatement(approval string) bool {
 }
 
 func hasNoOutsideActionsStatement(approval string) bool {
-	return strings.Contains(approval, "fara actiuni in afara packetului") ||
-		strings.Contains(approval, "no actions outside the packet") ||
+	return strings.Contains(approval, "no actions outside the packet") ||
 		strings.Contains(approval, "no action outside the packet")
+}
+
+func hasApprovalDecisionLiteral(approval string) bool {
+	return strings.Contains(approval, "approval for executing") ||
+		strings.Contains(approval, "aproval for executing")
 }
 
 func normalizeApproval(value string) string {

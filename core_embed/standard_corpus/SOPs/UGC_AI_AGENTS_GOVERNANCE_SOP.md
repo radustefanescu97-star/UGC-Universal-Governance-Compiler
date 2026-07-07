@@ -141,7 +141,7 @@ The agent must ask for explicit approval before:
 - automated job execution;
 - pricing, entitlement, or billing behavior changes.
 
-An approval is valid only when the user's sentence contains the literal word `aprobare` or `aproval`. If the sentence does not contain one of those words, the agent must treat it as discussion, direction, preference, or planning context, not approval, even if the wording sounds permissive.
+An approval is valid only when the user's sentence contains the literal word `approval`. If the sentence does not contain that word, the agent must treat it as discussion, direction, preference, or planning context, not approval, even if the wording sounds permissive.
 
 Generic approval is not enough when a stricter SOP requires exact wording, cost estimate, target, or rollback posture.
 

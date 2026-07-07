@@ -81,38 +81,38 @@ The following are intentionally not part of V1:
 
 ## Install
 
-UGC v1.0.3 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.3 release, then verify it with `ugc_1.0.3_checksums.txt`.
+UGC v1.0.4 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.4 release, then verify it with `ugc_1.0.4_checksums.txt`.
 
-v1.0.3 adds Cursor deny hooks (`.cursor/hooks.json` and `.cursor/hooks/ugc-deny.sh`). v1.0.2 added minimal public GitHub Actions CI for repository health checks: tests, vet, build, and a fresh `ugc init` / `ugc build` / `ugc audit` smoke flow.
+v1.0.4 aligns UGC's public CLI, approval packet, and generated governance language around English-first product wording. It retains the Cursor deny hooks introduced in v1.0.3 and the minimal public GitHub Actions CI introduced in v1.0.2.
 
 Available archives:
 
-- `ugc_1.0.3_linux_amd64.tar.gz`
-- `ugc_1.0.3_linux_arm64.tar.gz`
-- `ugc_1.0.3_darwin_amd64.tar.gz`
-- `ugc_1.0.3_darwin_arm64.tar.gz`
-- `ugc_1.0.3_windows_amd64.zip`
+- `ugc_1.0.4_linux_amd64.tar.gz`
+- `ugc_1.0.4_linux_arm64.tar.gz`
+- `ugc_1.0.4_darwin_amd64.tar.gz`
+- `ugc_1.0.4_darwin_arm64.tar.gz`
+- `ugc_1.0.4_windows_amd64.zip`
 
 macOS binaries are cross-compiled and are not signed or notarized.
 
 Linux/macOS example:
 
 ```bash
-tar -xzf ugc_1.0.3_linux_amd64.tar.gz
-./ugc_1.0.3_linux_amd64/ugc --help
+tar -xzf ugc_1.0.4_linux_amd64.tar.gz
+./ugc_1.0.4_linux_amd64/ugc --help
 ```
 
 Windows PowerShell example:
 
 ```powershell
-Expand-Archive .\ugc_1.0.3_windows_amd64.zip
-.\ugc_1.0.3_windows_amd64\ugc.exe --help
+Expand-Archive .\ugc_1.0.4_windows_amd64.zip
+.\ugc_1.0.4_windows_amd64\ugc.exe --help
 ```
 
 Checksum verification on systems with `sha256sum`:
 
 ```bash
-sha256sum -c ugc_1.0.3_checksums.txt
+sha256sum -c ugc_1.0.4_checksums.txt
 ```
 
 Source build remains available.

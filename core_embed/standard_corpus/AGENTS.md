@@ -38,4 +38,4 @@ Explicit approval is required for:
 - Changing the architecture of the parsing engine or project emitters.
 - Modifying the underlying governance rules.
 
-Approval is valid ONLY when the current thread contains the exact word `aprobare` or `aproval` from the project owner. Generic direction like "ok" or "go" is NOT approval for these gated actions.
+Approval is valid ONLY when the current thread contains the exact word `approval` from the project owner. Generic direction like "ok" or "go" is NOT approval for these gated actions.

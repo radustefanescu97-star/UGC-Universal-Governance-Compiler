@@ -26,7 +26,7 @@ If another SOP is stricter, the stricter SOP wins.
 An approval may be short only when it references a complete approval packet artifact by path and SHA256 hash.
 The approval packet artifact carries the full operational boundary.
 The chat approval carries the operator decision.
-The short approval must still contain the literal word `aprobare` or `aproval`.
+The short approval must still contain the literal word `approval`.
 
 ## Approval Packet Requirements
 
@@ -51,11 +51,11 @@ If any required field is missing, the packet is not approval-ready.
 Use this form when a complete packet exists:
 
 ```text
-aprobare pentru executarea <TASK_ID>, conform approval packetului <PACKET_PATH> SHA256 <HASH>. Scope-ul, allowed actions, forbidden actions, stop conditions si Return Gate raman exact cele din packet. Fara actiuni in afara packetului.
+approval for executing <TASK_ID>, according to approval packet <PACKET_PATH> SHA256 <HASH>. Scope, allowed actions, forbidden actions, stop conditions, and Return Gate remain exactly as defined in the packet. No actions outside the packet are authorized.
 ```
 
 Equivalent wording is acceptable only if it includes:
-- `aprobare` or `aproval`;
+- `approval`;
 - exact task id;
 - exact packet path;
 - exact packet SHA256;

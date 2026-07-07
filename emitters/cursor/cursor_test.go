@@ -13,7 +13,7 @@ import (
 
 func TestEmitter(t *testing.T) {
 	gov := &models.Governance{
-		BaseRules:  "Approval Gate: ask for aprobare before destructive actions.\nProtected Surfaces: do not touch neighboring systems.\nWorklog: update Plans/worklog.md.",
+		BaseRules:  "Approval Gate: ask for approval before destructive actions.\nProtected Surfaces: do not touch neighboring systems.\nWorklog: update Plans/worklog.md.",
 		SourceHash: "testhash123",
 		SOPs: []models.SOP{
 			{Name: "UGC_TEST_SOP.md", Content: "Stop Conditions: stop before deploy.\nDestructive action warning: no rm without approval.\nWorklog duty: append session evidence."},

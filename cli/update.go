@@ -12,12 +12,12 @@ var dryRun bool
 
 var updateCmd = &cobra.Command{
 	Use:   "update",
-	Short: "Actualizează Standard Corpus local",
-	Long:  `Sincronizează folderele locale .universal-governance/ cu versiunea din compilator, respectând modificările locale (Drift Detection).`,
+	Short: "Update the local Standard Corpus",
+	Long:  `Synchronize local .universal-governance/ directories with the compiler version while preserving local edits through drift detection.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		err := engine.UpdateCorpus(dryRun)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, "Eroare la actualizare:", err)
+			fmt.Fprintln(os.Stderr, "Update failed:", err)
 			os.Exit(1)
 		}
 	},

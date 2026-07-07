@@ -247,21 +247,21 @@ func updateCorpus(dryRun bool, io corpusUpdateIO) error {
 	}
 
 	if dryRun {
-		fmt.Printf("Dry run complet: %d created, %d updated, %d unchanged, %d skipped-local-edits, %d skipped-unverified-legacy, %d failed.\n",
+		fmt.Printf("Dry run complete: %d created, %d updated, %d unchanged, %d skipped-local-edits, %d skipped-unverified-legacy, %d failed.\n",
 			len(summary.Created), len(summary.Updated), len(summary.Unchanged), len(summary.SkippedLocalEdits), len(summary.SkippedUnverifiedLegacy), len(summary.Failed))
 	} else {
-		fmt.Printf("Update finalizat: %d created, %d updated, %d unchanged, %d skipped-local-edits, %d skipped-unverified-legacy, %d failed.\n",
+		fmt.Printf("Update complete: %d created, %d updated, %d unchanged, %d skipped-local-edits, %d skipped-unverified-legacy, %d failed.\n",
 			len(summary.Created), len(summary.Updated), len(summary.Unchanged), len(summary.SkippedLocalEdits), len(summary.SkippedUnverifiedLegacy), len(summary.Failed))
 	}
 
 	if len(summary.SkippedLocalEdits) > 0 {
-		fmt.Println("\nATENȚIE: Următoarele fișiere au modificări locale. Nu le-am suprascris:")
+		fmt.Println("\nWARNING: The following files have local edits and were not overwritten:")
 		for _, f := range summary.SkippedLocalEdits {
 			fmt.Printf("- %s\n", f)
 		}
 	}
 	if len(summary.SkippedUnverifiedLegacy) > 0 {
-		fmt.Println("\nATENȚIE: Următoarele fișiere nu pot fi verificate față de un state versionat. Nu le-am suprascris:")
+		fmt.Println("\nWARNING: The following files cannot be verified against versioned state and were not overwritten:")
 		for _, f := range summary.SkippedUnverifiedLegacy {
 			fmt.Printf("- %s\n", f)
 		}

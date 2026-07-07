@@ -12,10 +12,10 @@ import (
 )
 
 const (
-	hooksDirRel     = ".cursor/hooks"
-	hooksJSONRel    = ".cursor/hooks.json"
-	denyHookRel     = ".cursor/hooks/ugc-deny.sh"
-	denyHookName    = "ugc-deny.sh"
+	hooksDirRel      = ".cursor/hooks"
+	hooksJSONRel     = ".cursor/hooks.json"
+	denyHookRel      = ".cursor/hooks/ugc-deny.sh"
+	denyHookName     = "ugc-deny.sh"
 	sourceHashMarker = "UGC-Source-Hash"
 )
 
@@ -38,7 +38,7 @@ func (e *Emitter) Emit(g *models.Governance, targetDir string) error {
 }
 
 type cursorHooksFile struct {
-	Version int                       `json:"version"`
+	Version int                        `json:"version"`
 	Hooks   map[string][]cursorHookDef `json:"hooks"`
 }
 
@@ -88,7 +88,7 @@ func denyHookScript(sourceHash string) string {
 	b.WriteString("set -euo pipefail\n\n")
 	b.WriteString("input=$(cat)\n\n")
 	b.WriteString("deny() {\n")
-	b.WriteString(`  printf '%s\n' '{"permission":"deny","user_message":"UGC policy blocked this action. Explicit owner approval (aprobare/aproval) is required before gated actions.","agent_message":"Blocked by UGC-generated Cursor deny hook."}'` + "\n")
+	b.WriteString(`  printf '%s\n' '{"permission":"deny","user_message":"UGC policy blocked this action. Explicit owner approval is required before gated actions.","agent_message":"Blocked by UGC-generated Cursor deny hook."}'` + "\n")
 	b.WriteString("  exit 0\n")
 	b.WriteString("}\n\n")
 	b.WriteString("allow() {\n")
