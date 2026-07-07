@@ -13,7 +13,7 @@ UGC gives a repository a local governance source under `.universal-governance/`,
 - OpenAI Codex: `AGENTS.md`, `.codex/config.toml`, `.codex/rules/ugc.rules`
 - Google Antigravity: `.agents/AGENTS.md`, `.agents/skills/*/SKILL.md`
 - Anthropic Claude Code: `CLAUDE.md`, `.claude/settings.json`
-- Cursor by Anysphere: `.cursorrules`
+- Cursor by Anysphere: `.cursorrules`, `.cursor/hooks.json`, `.cursor/hooks/ugc-deny.sh`
 
 It is designed for people who care about approval gates, protected surfaces, stop conditions, worklog discipline, and repeatable governance across AI-assisted development tools.
 
@@ -82,36 +82,36 @@ The following are intentionally not part of V1:
 
 ## Install
 
-UGC v1.0.1 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.1 release, then verify it with `ugc_1.0.1_checksums.txt`.
+UGC v1.0.2 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.2 release, then verify it with `ugc_1.0.2_checksums.txt`.
 
 Available archives:
 
-- `ugc_1.0.1_linux_amd64.tar.gz`
-- `ugc_1.0.1_linux_arm64.tar.gz`
-- `ugc_1.0.1_darwin_amd64.tar.gz`
-- `ugc_1.0.1_darwin_arm64.tar.gz`
-- `ugc_1.0.1_windows_amd64.zip`
+- `ugc_1.0.2_linux_amd64.tar.gz`
+- `ugc_1.0.2_linux_arm64.tar.gz`
+- `ugc_1.0.2_darwin_amd64.tar.gz`
+- `ugc_1.0.2_darwin_arm64.tar.gz`
+- `ugc_1.0.2_windows_amd64.zip`
 
 macOS binaries are cross-compiled and are not signed or notarized.
 
 Linux/macOS example:
 
 ```bash
-tar -xzf ugc_1.0.1_linux_amd64.tar.gz
-./ugc_1.0.1_linux_amd64/ugc --help
+tar -xzf ugc_1.0.2_linux_amd64.tar.gz
+./ugc_1.0.2_linux_amd64/ugc --help
 ```
 
 Windows PowerShell example:
 
 ```powershell
-Expand-Archive .\ugc_1.0.1_windows_amd64.zip
-.\ugc_1.0.1_windows_amd64\ugc.exe --help
+Expand-Archive .\ugc_1.0.2_windows_amd64.zip
+.\ugc_1.0.2_windows_amd64\ugc.exe --help
 ```
 
 Checksum verification on systems with `sha256sum`:
 
 ```bash
-sha256sum -c ugc_1.0.1_checksums.txt
+sha256sum -c ugc_1.0.2_checksums.txt
 ```
 
 Source build remains available.
@@ -228,7 +228,7 @@ V1 examples:
 - Anthropic Claude Code is `constrained` for conservative deny rules emitted in `.claude/settings.json`; UGC does not claim comprehensive hook-based enforcement in V1.
 - OpenAI Codex is `constrained` for project-local approval/sandbox defaults and project rule files when the project layer is trusted; secret-read protection is `advisory` in V1.
 - Google Antigravity uses a mix of `native-skill` and `instructed`.
-- Cursor by Anysphere is `instructed` in V1.
+- Cursor by Anysphere is `constrained` for conservative deny hooks emitted in `.cursor/hooks.json` and `.cursor/hooks/ugc-deny.sh`; UGC relies on hook `deny` semantics only and does not claim comprehensive enforcement across every Cursor runtime surface.
 
 ## Design Principles
 

@@ -152,6 +152,7 @@ func TestAuditProjectIgnoresVendorUserFilesInClaudeAndCodexDirs(t *testing.T) {
 	mustWrite(t, filepath.Join(root, ".claude", "agents", "local.md"), "local agent")
 	mustWrite(t, filepath.Join(root, ".claude", "skills", "local", "SKILL.md"), "local skill")
 	mustWrite(t, filepath.Join(root, ".claude", "hooks", "local.sh"), "local hook")
+	mustWrite(t, filepath.Join(root, ".cursor", "hooks", "local.sh"), "local cursor hook")
 	mustWrite(t, filepath.Join(root, ".codex", "rules", "local.rules"), "prefix_rule(pattern = [\"gh\"], decision = \"prompt\")")
 
 	result, err := AuditProject(root)

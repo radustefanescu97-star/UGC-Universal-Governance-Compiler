@@ -37,31 +37,31 @@ func TargetCapabilityMatrix() map[string]map[string]string {
 			"codex":       "constrained",
 			"antigravity": "instructed",
 			"claude":      "constrained",
-			"cursor":      "instructed",
+			"cursor":      "constrained",
 		},
 		"stop_conditions": {
 			"codex":       "constrained",
 			"antigravity": "instructed",
 			"claude":      "constrained",
-			"cursor":      "instructed",
+			"cursor":      "constrained",
 		},
 		"protected_surfaces": {
 			"codex":       "constrained",
 			"antigravity": "instructed",
 			"claude":      "constrained",
-			"cursor":      "instructed",
+			"cursor":      "constrained",
 		},
 		"destructive_action_warnings": {
 			"codex":       "constrained",
 			"antigravity": "instructed",
 			"claude":      "constrained",
-			"cursor":      "instructed",
+			"cursor":      "constrained",
 		},
 		"secret_read_protection": {
 			"codex":       "advisory",
 			"antigravity": "advisory",
 			"claude":      "constrained",
-			"cursor":      "advisory",
+			"cursor":      "constrained",
 		},
 		"worklog_duty": {
 			"codex":       "instructed",
@@ -159,6 +159,8 @@ func CollectV1ArtifactPaths(rootDir string) ([]string, error) {
 		".codex/config.toml",
 		".codex/rules/ugc.rules",
 		".cursorrules",
+		".cursor/hooks.json",
+		".cursor/hooks/ugc-deny.sh",
 	} {
 		if fileExists(filepath.Join(rootDir, filepath.FromSlash(relPath))) {
 			paths = append(paths, relPath)
@@ -302,7 +304,7 @@ func targetForArtifact(path string) string {
 		return "claude"
 	case strings.HasPrefix(path, ".codex/"):
 		return "codex"
-	case path == ".cursorrules":
+	case path == ".cursorrules" || strings.HasPrefix(path, ".cursor/"):
 		return "cursor"
 	default:
 		return "unknown"

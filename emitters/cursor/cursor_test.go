@@ -1,12 +1,14 @@
 package cursor
 
 import (
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/universal-governance/ugc/engine/models"
+	"github.com/universal-governance/ugc/engine/policy"
 )
 
 func TestEmitter(t *testing.T) {
@@ -40,6 +42,52 @@ func TestEmitter(t *testing.T) {
 		}
 	}
 
+	hooksData, err := os.ReadFile(filepath.Join(tmpDir, ".cursor", "hooks.json"))
+	if err != nil {
+		t.Fatalf("Expected .cursor/hooks.json to exist: %v", err)
+	}
+	var hooks cursorHooksFile
+	if err := json.Unmarshal(hooksData, &hooks); err != nil {
+		t.Fatalf("hooks.json is not valid JSON: %v", err)
+	}
+	if hooks.Version != 1 {
+		t.Fatalf("hooks.json version = %d, want 1", hooks.Version)
+	}
+	for _, event := range []string{"beforeShellExecution", "beforeReadFile"} {
+		defs, ok := hooks.Hooks[event]
+		if !ok || len(defs) != 1 {
+			t.Fatalf("hooks.json missing %s hook definition: %+v", event, hooks.Hooks)
+		}
+		if defs[0].Command != denyHookRel {
+			t.Fatalf("%s hook command = %q, want %q", event, defs[0].Command, denyHookRel)
+		}
+		if !defs[0].FailClosed {
+			t.Fatalf("%s hook must set failClosed=true", event)
+		}
+	}
+
+	scriptPath := filepath.Join(tmpDir, denyHookRel)
+	scriptData, err := os.ReadFile(scriptPath)
+	if err != nil {
+		t.Fatalf("Expected %s to exist: %v", denyHookRel, err)
+	}
+	info, err := os.Stat(scriptPath)
+	if err != nil {
+		t.Fatalf("stat hook script failed: %v", err)
+	}
+	if info.Mode()&0111 == 0 {
+		t.Fatal("hook script is not executable")
+	}
+	script := string(scriptData)
+	if !strings.Contains(script, "# UGC-Source-Hash: testhash123") {
+		t.Fatal("hook script missing source hash header")
+	}
+	for _, pattern := range policy.ShellCommandDenySubstrings() {
+		if !strings.Contains(script, pattern) {
+			t.Errorf("hook script missing shell deny pattern %q", pattern)
+		}
+	}
+
 	tmpDir2 := t.TempDir()
 	if err := e.Emit(gov, tmpDir2); err != nil {
 		t.Fatalf("second Emit failed: %v", err)
@@ -50,5 +98,12 @@ func TestEmitter(t *testing.T) {
 	}
 	if string(data) != string(data2) {
 		t.Fatal(".cursorrules output is not deterministic")
+	}
+	hooksData2, err := os.ReadFile(filepath.Join(tmpDir2, ".cursor", "hooks.json"))
+	if err != nil {
+		t.Fatalf("Expected second hooks.json to exist: %v", err)
+	}
+	if string(hooksData) != string(hooksData2) {
+		t.Fatal("hooks.json output is not deterministic")
 	}
 }

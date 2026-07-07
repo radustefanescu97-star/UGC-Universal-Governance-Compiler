@@ -23,6 +23,9 @@ func TestFindUnexpectedGeneratedArtifacts(t *testing.T) {
 	mustWrite(t, filepath.Join(tmpDir, ".codex", "rules", "ugc.rules"), "codex rules")
 	mustWrite(t, filepath.Join(tmpDir, ".codex", "rules", "local.rules"), "local codex rules")
 	mustWrite(t, filepath.Join(tmpDir, ".cursorrules"), "cursor")
+	mustWrite(t, filepath.Join(tmpDir, ".cursor", "hooks.json"), "cursor hooks")
+	mustWrite(t, filepath.Join(tmpDir, ".cursor", "hooks", "ugc-deny.sh"), "cursor deny hook")
+	mustWrite(t, filepath.Join(tmpDir, ".cursor", "hooks", "local.sh"), "cursor local hook")
 	mustWrite(t, filepath.Join(tmpDir, ".codexrules"), "codex")
 
 	expected := []string{
@@ -34,6 +37,8 @@ func TestFindUnexpectedGeneratedArtifacts(t *testing.T) {
 		".codex/config.toml",
 		".codex/rules/ugc.rules",
 		".cursorrules",
+		".cursor/hooks.json",
+		".cursor/hooks/ugc-deny.sh",
 	}
 
 	unexpected, err := FindUnexpectedGeneratedArtifacts(tmpDir, expected)
@@ -62,6 +67,7 @@ func TestFindUnexpectedGeneratedArtifacts(t *testing.T) {
 		".claude/skills/local/SKILL.md",
 		".claude/hooks/local.sh",
 		".codex/rules/local.rules",
+		".cursor/hooks/local.sh",
 	} {
 		if containsString(unexpected, path) {
 			t.Errorf("vendor/user artifact %s should not be unexpected: %v", path, unexpected)
@@ -79,6 +85,8 @@ func TestBuildManifestForOutputs(t *testing.T) {
 	mustWrite(t, filepath.Join(tmpDir, ".codex", "config.toml"), "codex config")
 	mustWrite(t, filepath.Join(tmpDir, ".codex", "rules", "ugc.rules"), "codex rules")
 	mustWrite(t, filepath.Join(tmpDir, ".cursorrules"), "cursor")
+	mustWrite(t, filepath.Join(tmpDir, ".cursor", "hooks.json"), "cursor hooks")
+	mustWrite(t, filepath.Join(tmpDir, ".cursor", "hooks", "ugc-deny.sh"), "cursor deny hook")
 
 	manifest, err := BuildManifestForOutputs(tmpDir, "sourcehash")
 	if err != nil {
@@ -87,8 +95,8 @@ func TestBuildManifestForOutputs(t *testing.T) {
 	if manifest.SourceHash != "sourcehash" {
 		t.Fatalf("unexpected source hash %q", manifest.SourceHash)
 	}
-	if len(manifest.Artifacts) != 8 {
-		t.Fatalf("expected 8 artifacts, got %d", len(manifest.Artifacts))
+	if len(manifest.Artifacts) != 10 {
+		t.Fatalf("expected 10 artifacts, got %d", len(manifest.Artifacts))
 	}
 	if !containsArtifact(manifest.Artifacts, "AGENTS.md", "codex") {
 		t.Fatalf("expected Codex AGENTS.md artifact, got %+v", manifest.Artifacts)
@@ -98,6 +106,9 @@ func TestBuildManifestForOutputs(t *testing.T) {
 	}
 	if !containsArtifact(manifest.Artifacts, ".claude/settings.json", "claude") {
 		t.Fatalf("expected Claude settings artifact, got %+v", manifest.Artifacts)
+	}
+	if !containsArtifact(manifest.Artifacts, ".cursor/hooks.json", "cursor") {
+		t.Fatalf("expected Cursor hooks.json artifact, got %+v", manifest.Artifacts)
 	}
 	if !containsString(manifest.EnabledTargets, "codex") {
 		t.Fatalf("expected codex enabled target, got %v", manifest.EnabledTargets)
@@ -122,12 +133,15 @@ func TestCapabilityMatrixHonestV1Labels(t *testing.T) {
 		if matrix[concept]["antigravity"] == "enforced" {
 			t.Fatalf("Antigravity must not be labeled machine-enforced for %s", concept)
 		}
-		if matrix[concept]["cursor"] == "enforced" {
-			t.Fatalf("Cursor must not be labeled machine-enforced without verified hooks for %s", concept)
+		if matrix[concept]["cursor"] != "constrained" {
+			t.Fatalf("expected Cursor %s to be constrained, got %q", concept, matrix[concept]["cursor"])
 		}
 	}
 	if matrix["secret_read_protection"]["claude"] != "constrained" {
 		t.Fatalf("expected Claude secret read protection to be constrained, got %q", matrix["secret_read_protection"]["claude"])
+	}
+	if matrix["secret_read_protection"]["cursor"] != "constrained" {
+		t.Fatalf("expected Cursor secret read protection to be constrained, got %q", matrix["secret_read_protection"]["cursor"])
 	}
 }
 

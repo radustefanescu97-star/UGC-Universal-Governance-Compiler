@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/universal-governance/ugc/engine/models"
+	"github.com/universal-governance/ugc/engine/policy"
 )
 
 type Emitter struct{}
@@ -38,7 +39,7 @@ type claudePermissions struct {
 func writeClaudeSettings(g *models.Governance, targetDir string) error {
 	settings := claudeSettings{
 		Permissions: claudePermissions{
-			Deny: claudeDenyRules(),
+			Deny: policy.ClaudeDenyRules(),
 		},
 	}
 
@@ -55,45 +56,3 @@ func writeClaudeSettings(g *models.Governance, targetDir string) error {
 	return os.WriteFile(settingsPath, data, 0644)
 }
 
-func claudeDenyRules() []string {
-	return []string{
-		"Bash(git push)",
-		"Bash(git push *)",
-		"Bash(git commit)",
-		"Bash(git commit *)",
-		"Bash(git reset)",
-		"Bash(git reset *)",
-		"Bash(rm -rf)",
-		"Bash(rm -rf *)",
-		"Bash(npm publish)",
-		"Bash(npm publish *)",
-		"Bash(pnpm publish)",
-		"Bash(pnpm publish *)",
-		"Bash(yarn publish)",
-		"Bash(yarn publish *)",
-		"Bash(gh release)",
-		"Bash(gh release *)",
-		"Bash(docker push)",
-		"Bash(docker push *)",
-		"Bash(kubectl apply)",
-		"Bash(kubectl apply *)",
-		"Bash(terraform apply)",
-		"Bash(terraform apply *)",
-		"Bash(vercel deploy)",
-		"Bash(vercel deploy *)",
-		"Bash(netlify deploy)",
-		"Bash(netlify deploy *)",
-		"Bash(firebase deploy)",
-		"Bash(firebase deploy *)",
-		"Bash(gcloud run deploy)",
-		"Bash(gcloud run deploy *)",
-		"Read(./.env)",
-		"Read(./.env.*)",
-		"Read(./secrets/**)",
-		"Read(./config/credentials.json)",
-		"Read(./.npmrc)",
-		"Read(./.pypirc)",
-		"Read(~/.aws/credentials)",
-		"Read(~/.ssh/**)",
-	}
-}

@@ -174,6 +174,8 @@ func TestApplyBuildPlanWritesAllV1ArtifactsAndManifest(t *testing.T) {
 		".codex/config.toml",
 		".codex/rules/ugc.rules",
 		".cursorrules",
+		".cursor/hooks.json",
+		".cursor/hooks/ugc-deny.sh",
 		BuildManifestPath,
 	} {
 		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(path))); err != nil {

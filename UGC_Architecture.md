@@ -112,9 +112,11 @@ Cursor output includes:
 
 ```text
 .cursorrules
+.cursor/hooks.json
+.cursor/hooks/ugc-deny.sh
 ```
 
-The Cursor emitter flattens the governance model into a single rules file. Cursor is labeled `instructed` in V1.
+The Cursor emitter writes human-readable instructions in `.cursorrules` plus conservative deny hooks under `.cursor/`. UGC labels relevant Cursor capabilities as `constrained` where hook `deny` coverage applies, and `instructed` for worklog duty.
 
 ## Build Flow
 
@@ -164,9 +166,11 @@ Audit ownership is exact-path based. UGC owns artifacts such as:
 .claude/settings.json
 .codex/config.toml
 .codex/rules/ugc.rules
+.cursor/hooks.json
+.cursor/hooks/ugc-deny.sh
 ```
 
-It does not treat normal vendor/user files under `.claude/` or user Codex rules under `.codex/rules/*.rules` as UGC-generated artifacts unless they are explicit UGC-owned paths.
+It does not treat normal vendor/user files under `.claude/` or user Codex rules under `.codex/rules/*.rules` as UGC-generated artifacts unless they are explicit UGC-owned paths. User hook scripts under `.cursor/hooks/` other than `ugc-deny.sh` are also treated as vendor/user files.
 
 ## Capability Labels
 
