@@ -75,43 +75,44 @@ UGC V1 is a local Go CLI. It currently focuses on four official targets: OpenAI 
 The following are intentionally not part of V1:
 
 - Git hooks or CI enforcement;
-- prebuilt release binaries;
 - package-manager installation;
 - Copilot or Windsurf targets;
 - external services, accounts, or hosted control planes.
 
 ## Install
 
-UGC v1.0.2 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.2 release, then verify it with `ugc_1.0.2_checksums.txt`.
+UGC v1.0.3 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.3 release, then verify it with `ugc_1.0.3_checksums.txt`.
+
+v1.0.3 adds Cursor deny hooks (`.cursor/hooks.json` and `.cursor/hooks/ugc-deny.sh`). v1.0.2 added minimal public GitHub Actions CI for repository health checks: tests, vet, build, and a fresh `ugc init` / `ugc build` / `ugc audit` smoke flow.
 
 Available archives:
 
-- `ugc_1.0.2_linux_amd64.tar.gz`
-- `ugc_1.0.2_linux_arm64.tar.gz`
-- `ugc_1.0.2_darwin_amd64.tar.gz`
-- `ugc_1.0.2_darwin_arm64.tar.gz`
-- `ugc_1.0.2_windows_amd64.zip`
+- `ugc_1.0.3_linux_amd64.tar.gz`
+- `ugc_1.0.3_linux_arm64.tar.gz`
+- `ugc_1.0.3_darwin_amd64.tar.gz`
+- `ugc_1.0.3_darwin_arm64.tar.gz`
+- `ugc_1.0.3_windows_amd64.zip`
 
 macOS binaries are cross-compiled and are not signed or notarized.
 
 Linux/macOS example:
 
 ```bash
-tar -xzf ugc_1.0.2_linux_amd64.tar.gz
-./ugc_1.0.2_linux_amd64/ugc --help
+tar -xzf ugc_1.0.3_linux_amd64.tar.gz
+./ugc_1.0.3_linux_amd64/ugc --help
 ```
 
 Windows PowerShell example:
 
 ```powershell
-Expand-Archive .\ugc_1.0.2_windows_amd64.zip
-.\ugc_1.0.2_windows_amd64\ugc.exe --help
+Expand-Archive .\ugc_1.0.3_windows_amd64.zip
+.\ugc_1.0.3_windows_amd64\ugc.exe --help
 ```
 
 Checksum verification on systems with `sha256sum`:
 
 ```bash
-sha256sum -c ugc_1.0.2_checksums.txt
+sha256sum -c ugc_1.0.3_checksums.txt
 ```
 
 Source build remains available.
@@ -246,7 +247,7 @@ UGC is built around a few practical principles:
 
 UGC verifies generated governance artifacts. It does not guarantee that every third-party AI tool will obey instructions identically at runtime.
 
-V1 does not install git hooks, mutate CI, configure branch protections, deploy a service, or enforce policy outside the supported local generated files.
+V1 does not install git hooks, configure branch protections, deploy a service, or enforce policy outside the supported local generated files.
 
 Build application uses local rollback where the filesystem permits it. If the filesystem itself refuses restoration, UGC reports the incomplete rollback and does not write a clean manifest; run `ugc audit` after any interrupted or failed build.
 
