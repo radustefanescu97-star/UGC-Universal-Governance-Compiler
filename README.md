@@ -10,7 +10,7 @@ UGC takes the opposite approach: write governance once, compile it into agent-sp
 
 UGC gives a repository a local governance source under `.universal-governance/`, then generates deterministic target files for the supported V1 agents:
 
-- OpenAI Codex: `AGENTS.md`, `.codex/config.toml`, `.codex/rules/ugc.rules`
+- OpenAI Codex: `AGENTS.md`, `.codex/config.toml`, `.codex/rules/ugc.rules`, `.agents/skills/ugc-governance/SKILL.md`
 - Google Antigravity: `.agents/AGENTS.md`, `.agents/skills/*/SKILL.md`
 - Anthropic Claude Code: `CLAUDE.md`, `.claude/settings.json`
 - Cursor by Anysphere: `.cursorrules`, `.cursor/hooks.json`, `.cursor/hooks/ugc-deny.sh`
@@ -81,38 +81,38 @@ The following are intentionally not part of V1:
 
 ## Install
 
-UGC v1.0.3 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.3 release, then verify it with `ugc_1.0.3_checksums.txt`.
+UGC v1.0.6 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.6 release, then verify it with `ugc_1.0.6_checksums.txt`.
 
-v1.0.3 adds Cursor deny hooks (`.cursor/hooks.json` and `.cursor/hooks/ugc-deny.sh`). v1.0.2 added minimal public GitHub Actions CI for repository health checks: tests, vet, build, and a fresh `ugc init` / `ugc build` / `ugc audit` smoke flow.
+v1.0.6 fixes generated Cursor deny hook bash syntax (patterns with spaces such as `git push` no longer break script parsing), ensures `ugc build` writes and keeps `.cursor/hooks/ugc-deny.sh` executable (`0755`), and narrows Cursor hook hard-deny scope so `git commit`, `git push`, `git reset`, and `gh release` are governed by SOPs and `.cursorrules` rather than hook block. It retains the Codex three-layer output from v1.0.5, English-first public wording from v1.0.4, Cursor deny hooks from v1.0.3, and minimal public GitHub Actions CI from v1.0.2.
 
 Available archives:
 
-- `ugc_1.0.3_linux_amd64.tar.gz`
-- `ugc_1.0.3_linux_arm64.tar.gz`
-- `ugc_1.0.3_darwin_amd64.tar.gz`
-- `ugc_1.0.3_darwin_arm64.tar.gz`
-- `ugc_1.0.3_windows_amd64.zip`
+- `ugc_1.0.6_linux_amd64.tar.gz`
+- `ugc_1.0.6_linux_arm64.tar.gz`
+- `ugc_1.0.6_darwin_amd64.tar.gz`
+- `ugc_1.0.6_darwin_arm64.tar.gz`
+- `ugc_1.0.6_windows_amd64.zip`
 
 macOS binaries are cross-compiled and are not signed or notarized.
 
 Linux/macOS example:
 
 ```bash
-tar -xzf ugc_1.0.3_linux_amd64.tar.gz
-./ugc_1.0.3_linux_amd64/ugc --help
+tar -xzf ugc_1.0.6_linux_amd64.tar.gz
+./ugc_1.0.6_linux_amd64/ugc --help
 ```
 
 Windows PowerShell example:
 
 ```powershell
-Expand-Archive .\ugc_1.0.3_windows_amd64.zip
-.\ugc_1.0.3_windows_amd64\ugc.exe --help
+Expand-Archive .\ugc_1.0.6_windows_amd64.zip
+.\ugc_1.0.6_windows_amd64\ugc.exe --help
 ```
 
 Checksum verification on systems with `sha256sum`:
 
 ```bash
-sha256sum -c ugc_1.0.3_checksums.txt
+sha256sum -c ugc_1.0.6_checksums.txt
 ```
 
 Source build remains available.
@@ -227,7 +227,7 @@ UGC reports target capabilities honestly because each agent exposes different co
 V1 examples:
 
 - Anthropic Claude Code is `constrained` for conservative deny rules emitted in `.claude/settings.json`; UGC does not claim comprehensive hook-based enforcement in V1.
-- OpenAI Codex is `constrained` for project-local approval/sandbox defaults and project rule files when the project layer is trusted; secret-read protection is `advisory` in V1.
+- OpenAI Codex is `constrained` for project-local approval/sandbox defaults and project rule files when the project layer is trusted. Its worklog workflow is represented through a repo-local governance skill, while secret-read protection remains `advisory` in V1.
 - Google Antigravity uses a mix of `native-skill` and `instructed`.
 - Cursor by Anysphere is `constrained` for conservative deny hooks emitted in `.cursor/hooks.json` and `.cursor/hooks/ugc-deny.sh`; UGC relies on hook `deny` semantics only and does not claim comprehensive enforcement across every Cursor runtime surface.
 

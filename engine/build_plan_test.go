@@ -182,6 +182,13 @@ func TestApplyBuildPlanWritesAllV1ArtifactsAndManifest(t *testing.T) {
 			t.Fatalf("expected %s to exist: %v", path, err)
 		}
 	}
+	hookInfo, err := os.Stat(filepath.Join(root, ".cursor/hooks/ugc-deny.sh"))
+	if err != nil {
+		t.Fatalf("stat cursor deny hook failed: %v", err)
+	}
+	if hookInfo.Mode().Perm()&0111 == 0 {
+		t.Fatalf("cursor deny hook must be executable, got mode %o", hookInfo.Mode().Perm())
+	}
 	manifest, err := ReadBuildManifest(root)
 	if err != nil {
 		t.Fatalf("ReadBuildManifest failed: %v", err)

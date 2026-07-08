@@ -2,7 +2,9 @@ package cursor
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -82,10 +84,39 @@ func TestEmitter(t *testing.T) {
 	if !strings.Contains(script, "# UGC-Source-Hash: testhash123") {
 		t.Fatal("hook script missing source hash header")
 	}
-	for _, pattern := range policy.ShellCommandDenySubstrings() {
+	for _, pattern := range policy.CursorShellCommandDenySubstrings() {
 		if !strings.Contains(script, pattern) {
 			t.Errorf("hook script missing shell deny pattern %q", pattern)
 		}
+	}
+	for _, pattern := range []string{"git push", "git commit", "git reset", "gh release"} {
+		if strings.Contains(script, fmt.Sprintf(`== *"%s"*`, pattern)) {
+			t.Errorf("hook script must not hard-deny approval-gated command %q", pattern)
+		}
+	}
+	if strings.Contains(script, `case " $command " in *git push*)`) {
+		t.Fatal("hook script still uses broken case pattern for shell commands")
+	}
+	if err := exec.Command("bash", "-n", scriptPath).Run(); err != nil {
+		t.Fatalf("generated hook script failed bash -n: %v", err)
+	}
+	if got := runHookScript(t, scriptPath, `{"command":"ls -la"}`); !strings.Contains(got, `"permission":"allow"`) {
+		t.Fatalf("benign command: want allow, got %q", got)
+	}
+	for _, cmd := range []string{
+		`{"command":"git push origin main"}`,
+		`{"command":"git commit -m test"}`,
+		`{"command":"gh release create v1.0.6"}`,
+	} {
+		if got := runHookScript(t, scriptPath, cmd); !strings.Contains(got, `"permission":"allow"`) {
+			t.Fatalf("%s: want allow, got %q", cmd, got)
+		}
+	}
+	if got := runHookScript(t, scriptPath, `{"command":"rm -rf /tmp/x"}`); !strings.Contains(got, `"permission":"deny"`) {
+		t.Fatalf("rm -rf: want deny, got %q", got)
+	}
+	if got := runHookScript(t, scriptPath, `{"path":"/tmp/project/.env"}`); !strings.Contains(got, `"permission":"deny"`) {
+		t.Fatalf(".env read: want deny, got %q", got)
 	}
 
 	tmpDir2 := t.TempDir()
@@ -106,4 +137,15 @@ func TestEmitter(t *testing.T) {
 	if string(hooksData) != string(hooksData2) {
 		t.Fatal("hooks.json output is not deterministic")
 	}
+}
+
+func runHookScript(t *testing.T, scriptPath, input string) string {
+	t.Helper()
+	cmd := exec.Command("bash", scriptPath)
+	cmd.Stdin = strings.NewReader(input)
+	out, err := cmd.Output()
+	if err != nil {
+		t.Fatalf("hook script execution failed: %v", err)
+	}
+	return strings.TrimSpace(string(out))
 }
