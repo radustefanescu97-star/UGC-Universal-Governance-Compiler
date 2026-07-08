@@ -117,7 +117,7 @@ Cursor output includes:
 .cursor/hooks/ugc-deny.sh
 ```
 
-The Cursor emitter writes human-readable instructions in `.cursorrules` plus conservative deny hooks under `.cursor/`. UGC labels relevant Cursor capabilities as `constrained` where hook `deny` coverage applies, and `instructed` for worklog duty.
+The Cursor emitter writes human-readable instructions in `.cursorrules` plus conservative deny hooks under `.cursor/`. Generated `ugc-deny.sh` uses bash `[[ ... ]]` pattern tests (not invalid `case` glob syntax), is applied with mode `0755`, and hard-denies destructive shell, publish/deploy commands, and secret file reads only. Approval-gated git and GitHub release commands (`git commit`, `git push`, `git reset`, `gh release`) are governed by SOPs and `.cursorrules`, not blocked by the hook. UGC labels relevant Cursor capabilities as `constrained` where hook `deny` coverage applies, and `instructed` for worklog duty and approval-gated workflows.
 
 ## Build Flow
 

@@ -191,10 +191,14 @@ func applyBuildPlan(rootDir, generatedDir string, plan BuildPlan, io buildPlanIO
 		if err := io.mkdirAll(filepath.Dir(operation.actualPath), 0755); err != nil {
 			return rollbackBuildOperations(applied, err, io)
 		}
-		if err := io.writeFileAtomic(operation.actualPath, operation.data, 0644); err != nil {
+		if err := io.writeFileAtomic(operation.actualPath, operation.data, buildArtifactFileMode(operation.item.Path)); err != nil {
 			return rollbackBuildOperations(applied, err, io)
 		}
 		applied = append(applied, operation)
+	}
+
+	if err := ensureCursorDenyHookExecutable(rootDir, io); err != nil {
+		return rollbackBuildOperations(applied, err, io)
 	}
 
 	if err := io.writeBuildManifest(rootDir, plan.Manifest); err != nil {
@@ -254,7 +258,7 @@ func restoreGeneratedArtifact(rootDir, generatedDir, sourceHash, requestedPath s
 	if err := io.mkdirAll(filepath.Dir(actualPath), 0755); err != nil {
 		return err
 	}
-	if err := io.writeFileAtomic(actualPath, data, 0644); err != nil {
+	if err := io.writeFileAtomic(actualPath, data, buildArtifactFileMode(relPath)); err != nil {
 		return err
 	}
 	return nil
@@ -411,6 +415,30 @@ func readPriorBuildManifest(rootDir string) (BuildManifest, bool) {
 		return BuildManifest{}, false
 	}
 	return manifest, true
+}
+
+const cursorDenyHookRel = ".cursor/hooks/ugc-deny.sh"
+
+func buildArtifactFileMode(relPath string) os.FileMode {
+	if filepath.ToSlash(relPath) == cursorDenyHookRel {
+		return 0755
+	}
+	return 0644
+}
+
+func ensureCursorDenyHookExecutable(rootDir string, io buildPlanIO) error {
+	path := filepath.Join(rootDir, filepath.FromSlash(cursorDenyHookRel))
+	info, err := io.stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if info.IsDir() {
+		return fmt.Errorf("cursor deny hook path is a directory: %s", cursorDenyHookRel)
+	}
+	return os.Chmod(path, 0755)
 }
 
 func hasSourceHashMarker(data []byte) bool {

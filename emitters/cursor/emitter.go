@@ -59,6 +59,9 @@ func writeCursorHooks(g *models.Governance, targetDir string) error {
 	if err := os.WriteFile(hookScriptPath, []byte(script), 0755); err != nil {
 		return err
 	}
+	if err := os.Chmod(hookScriptPath, 0755); err != nil {
+		return err
+	}
 
 	hooks := cursorHooksFile{
 		Version: 1,
@@ -101,8 +104,8 @@ func denyHookScript(sourceHash string) string {
 	b.WriteString(`  path=$(printf '%s' "$input" | sed -n 's/.*"filePath"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)` + "\n")
 	b.WriteString("fi\n\n")
 	b.WriteString("if [ -n \"$command\" ]; then\n")
-	for _, pattern := range policy.ShellCommandDenySubstrings() {
-		fmt.Fprintf(&b, "  case \" $command \" in *%s*) deny ;; esac\n", pattern)
+	for _, pattern := range policy.CursorShellCommandDenySubstrings() {
+		fmt.Fprintf(&b, "  if [[ \" $command \" == *\"%s\"* ]]; then deny; fi\n", pattern)
 	}
 	b.WriteString("fi\n\n")
 	b.WriteString("if [ -n \"$path\" ]; then\n")

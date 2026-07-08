@@ -65,6 +65,27 @@ func ShellCommandDenySubstrings() []string {
 	}
 }
 
+// cursorApprovalGatedShellCommands are governed by SOPs and .cursorrules, not Cursor hook hard-deny.
+var cursorApprovalGatedShellCommands = map[string]struct{}{
+	"git commit": {},
+	"git push":   {},
+	"git reset":  {},
+	"gh release": {},
+}
+
+// CursorShellCommandDenySubstrings returns shell patterns hard-denied by the Cursor hook only.
+func CursorShellCommandDenySubstrings() []string {
+	all := ShellCommandDenySubstrings()
+	out := make([]string, 0, len(all))
+	for _, pattern := range all {
+		if _, gated := cursorApprovalGatedShellCommands[pattern]; gated {
+			continue
+		}
+		out = append(out, pattern)
+	}
+	return out
+}
+
 // SecretReadPathRules describe file paths that hook enforcement should deny.
 type SecretReadPathRule struct {
 	Prefix   string

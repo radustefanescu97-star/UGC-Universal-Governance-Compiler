@@ -81,38 +81,38 @@ The following are intentionally not part of V1:
 
 ## Install
 
-UGC v1.0.5 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.5 release, then verify it with `ugc_1.0.5_checksums.txt`.
+UGC v1.0.6 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.6 release, then verify it with `ugc_1.0.6_checksums.txt`.
 
-v1.0.5 makes Codex a first-class three-layer governance target by generating repository guidance, project-local config/rules, and a repo-local governance skill. It retains the English-first public wording from v1.0.4, the Cursor deny hooks introduced in v1.0.3, and the minimal public GitHub Actions CI introduced in v1.0.2.
+v1.0.6 fixes generated Cursor deny hook bash syntax (patterns with spaces such as `git push` no longer break script parsing), ensures `ugc build` writes and keeps `.cursor/hooks/ugc-deny.sh` executable (`0755`), and narrows Cursor hook hard-deny scope so `git commit`, `git push`, `git reset`, and `gh release` are governed by SOPs and `.cursorrules` rather than hook block. It retains the Codex three-layer output from v1.0.5, English-first public wording from v1.0.4, Cursor deny hooks from v1.0.3, and minimal public GitHub Actions CI from v1.0.2.
 
 Available archives:
 
-- `ugc_1.0.5_linux_amd64.tar.gz`
-- `ugc_1.0.5_linux_arm64.tar.gz`
-- `ugc_1.0.5_darwin_amd64.tar.gz`
-- `ugc_1.0.5_darwin_arm64.tar.gz`
-- `ugc_1.0.5_windows_amd64.zip`
+- `ugc_1.0.6_linux_amd64.tar.gz`
+- `ugc_1.0.6_linux_arm64.tar.gz`
+- `ugc_1.0.6_darwin_amd64.tar.gz`
+- `ugc_1.0.6_darwin_arm64.tar.gz`
+- `ugc_1.0.6_windows_amd64.zip`
 
 macOS binaries are cross-compiled and are not signed or notarized.
 
 Linux/macOS example:
 
 ```bash
-tar -xzf ugc_1.0.5_linux_amd64.tar.gz
-./ugc_1.0.5_linux_amd64/ugc --help
+tar -xzf ugc_1.0.6_linux_amd64.tar.gz
+./ugc_1.0.6_linux_amd64/ugc --help
 ```
 
 Windows PowerShell example:
 
 ```powershell
-Expand-Archive .\ugc_1.0.5_windows_amd64.zip
-.\ugc_1.0.5_windows_amd64\ugc.exe --help
+Expand-Archive .\ugc_1.0.6_windows_amd64.zip
+.\ugc_1.0.6_windows_amd64\ugc.exe --help
 ```
 
 Checksum verification on systems with `sha256sum`:
 
 ```bash
-sha256sum -c ugc_1.0.5_checksums.txt
+sha256sum -c ugc_1.0.6_checksums.txt
 ```
 
 Source build remains available.
