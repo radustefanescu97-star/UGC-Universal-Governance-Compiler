@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/universal-governance/ugc/engine/models"
@@ -211,6 +212,7 @@ func TestApplyBuildPlanWritesAllV1ArtifactsAndManifest(t *testing.T) {
 	if !containsArtifact(manifest.Artifacts, ".claude/settings.json", "claude") {
 		t.Fatalf("manifest missing Claude settings artifact: %+v", manifest.Artifacts)
 	}
+	assertAllGeneratedSkillsHaveFrontmatter(t, root)
 }
 
 func TestApplyBuildPlanFailureLeavesNoNewManifest(t *testing.T) {
@@ -450,5 +452,42 @@ func failAtomicWriteForBase(base string) func(filename string, data []byte, perm
 			return errors.New("injected write failure")
 		}
 		return atomicWriteFile(filename, data, perm)
+	}
+}
+
+func assertAllGeneratedSkillsHaveFrontmatter(t *testing.T, root string) {
+	t.Helper()
+	skillsRoot := filepath.Join(root, ".agents", "skills")
+	err := filepath.WalkDir(skillsRoot, func(path string, d os.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if d.IsDir() || d.Name() != "SKILL.md" {
+			return nil
+		}
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		content := strings.ReplaceAll(string(data), "\r\n", "\n")
+		if !strings.HasPrefix(content, "---\n") {
+			t.Fatalf("%s missing skill frontmatter", path)
+		}
+		lines := strings.Split(content, "\n")
+		for i := 1; i < len(lines); i++ {
+			if strings.TrimSpace(lines[i]) != "---" {
+				continue
+			}
+			header := strings.Join(lines[1:i], "\n")
+			if !strings.Contains(header, "name:") || !strings.Contains(header, "description:") {
+				t.Fatalf("%s missing name or description in skill frontmatter", path)
+			}
+			return nil
+		}
+		t.Fatalf("%s missing closing skill frontmatter delimiter", path)
+		return nil
+	})
+	if err != nil {
+		t.Fatalf("walk generated skills failed: %v", err)
 	}
 }

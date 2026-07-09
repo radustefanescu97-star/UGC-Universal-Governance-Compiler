@@ -94,7 +94,7 @@ Antigravity output includes:
 .agents/skills/*/SKILL.md
 ```
 
-The Antigravity emitter writes the main agent instructions and one skill file per SOP. Worklog-related capability can be represented as `native-skill`; other governance concepts may be `instructed` depending on target behavior.
+The Antigravity emitter writes the main agent instructions and one skill file per SOP. Generated SOP skill files include Agent Skill frontmatter so shared `.agents/skills` output remains compatible with Codex skill discovery. Worklog-related capability can be represented as `native-skill`; other governance concepts may be `instructed` depending on target behavior.
 
 ### Claude Code
 

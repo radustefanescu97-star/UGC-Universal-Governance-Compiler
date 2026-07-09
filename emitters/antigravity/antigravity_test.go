@@ -10,11 +10,13 @@ import (
 )
 
 func TestEmitter(t *testing.T) {
+	worklogSkill := "---\nname: ugc-worklog-sync\ndescription: Mandates syncing worklog evidence.\n---\n\n# UGC Worklog Sync Skill\n\nWorklog duty: append session evidence."
 	gov := &models.Governance{
 		BaseRules:  "Approval Gate: ask for approval before destructive actions.\nProtected Surfaces: do not touch neighboring systems.\nWorklog: update Plans/worklog.md.",
 		SourceHash: "testhash123",
 		SOPs: []models.SOP{
-			{Name: "UGC_WORKLOG_SYNC_SKILL.md", Content: "Stop Conditions: stop before deploy.\nDestructive action warning: no rm without approval.\nWorklog duty: append session evidence."},
+			{Name: "UGC_RELEASE_SOP.md", Content: "# Universal Release and Promotion SOP\n\nStop Conditions: stop before deploy.\nDestructive action warning: no rm without approval."},
+			{Name: "UGC_WORKLOG_SYNC_SKILL.md", Content: worklogSkill},
 		},
 	}
 
@@ -40,16 +42,33 @@ func TestEmitter(t *testing.T) {
 		}
 	}
 
-	skillFile := filepath.Join(tmpDir, ".agents", "skills", "ugc-worklog-sync", "SKILL.md")
+	skillFile := filepath.Join(tmpDir, ".agents", "skills", "ugc-release-sop", "SKILL.md")
 	skillData, err := os.ReadFile(skillFile)
 	if err != nil {
 		t.Fatalf("Expected SKILL.md to exist: %v", err)
 	}
 	skillContent := string(skillData)
-	for _, want := range []string{"Stop Conditions", "Destructive action warning", "Worklog duty"} {
+	for _, want := range []string{
+		"---\nname: ugc-release-sop\n",
+		"description: \"Use when applying UGC guidance from Universal Release and Promotion SOP.\"",
+		"Stop Conditions",
+		"Destructive action warning",
+	} {
 		if !strings.Contains(skillContent, want) {
 			t.Errorf("SKILL.md missing governance concept %q", want)
 		}
+	}
+	if !hasSkillFrontmatter(skillContent) {
+		t.Fatal("generated Antigravity skill must include Codex-compatible frontmatter")
+	}
+
+	worklogSkillFile := filepath.Join(tmpDir, ".agents", "skills", "ugc-worklog-sync", "SKILL.md")
+	worklogSkillData, err := os.ReadFile(worklogSkillFile)
+	if err != nil {
+		t.Fatalf("Expected worklog SKILL.md to exist: %v", err)
+	}
+	if string(worklogSkillData) != worklogSkill {
+		t.Fatal("existing skill frontmatter should be preserved without double wrapping")
 	}
 
 	tmpDir2 := t.TempDir()
@@ -62,5 +81,12 @@ func TestEmitter(t *testing.T) {
 	}
 	if string(data) != string(data2) {
 		t.Fatal("AGENTS.md output is not deterministic")
+	}
+	skillData2, err := os.ReadFile(filepath.Join(tmpDir2, ".agents", "skills", "ugc-release-sop", "SKILL.md"))
+	if err != nil {
+		t.Fatalf("Expected second SKILL.md to exist: %v", err)
+	}
+	if string(skillData) != string(skillData2) {
+		t.Fatal("SKILL.md output is not deterministic")
 	}
 }
