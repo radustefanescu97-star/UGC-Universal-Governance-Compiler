@@ -13,7 +13,7 @@ import (
 type Emitter struct{}
 
 func (e *Emitter) Emit(g *models.Governance, targetDir string) error {
-	fmt.Println("Emitting Claude configuration...")
+	fmt.Fprintln(os.Stderr, "Emitting Claude configuration...")
 
 	var content string
 	content += fmt.Sprintf("// UGC-Source-Hash: %s\n\n", g.SourceHash)

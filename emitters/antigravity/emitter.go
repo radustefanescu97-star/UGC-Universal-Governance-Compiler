@@ -12,7 +12,7 @@ import (
 type Emitter struct{}
 
 func (e *Emitter) Emit(g *models.Governance, targetDir string) error {
-	fmt.Println("Emitting Antigravity configuration...")
+	fmt.Fprintln(os.Stderr, "Emitting Antigravity configuration...")
 	agentsDir := filepath.Join(targetDir, ".agents")
 	if err := os.MkdirAll(agentsDir, 0755); err != nil {
 		return err

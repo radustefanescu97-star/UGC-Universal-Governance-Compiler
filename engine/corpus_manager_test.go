@@ -88,7 +88,7 @@ func TestUpdateCorpusUnchangedPathDoesNotRewriteContent(t *testing.T) {
 	}
 
 	writes := 0
-	err = updateCorpus(false, corpusUpdateIO{
+	_, err = updateCorpus(false, false, corpusUpdateIO{
 		writeFileAtomic: func(filename string, data []byte, perm os.FileMode) error {
 			writes++
 			return atomicWriteFile(filename, data, perm)
@@ -119,7 +119,7 @@ func TestUpdateCorpusWriteFailureDoesNotSaveState(t *testing.T) {
 
 	saveCalled := false
 	writeErr := errors.New("write failed")
-	err := updateCorpus(false, corpusUpdateIO{
+	_, err := updateCorpus(false, false, corpusUpdateIO{
 		writeFileAtomic: func(filename string, data []byte, perm os.FileMode) error {
 			return writeErr
 		},

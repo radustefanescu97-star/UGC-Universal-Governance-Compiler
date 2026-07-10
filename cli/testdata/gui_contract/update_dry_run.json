@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "dry_run": true,
+  "state_warning": "State: missing .state.json; existing changed files will be treated as unverified legacy.",
+  "summary": {
+    "created": 18,
+    "updated": 0,
+    "unchanged": 0,
+    "skipped_local_edits": 0,
+    "skipped_unverified_legacy": 0,
+    "failed": 0
+  },
+  "created": [
+    "AGENTS.md",
+    "SOPs/README.md",
+    "SOPs/UGC_AI_AGENTS_GOVERNANCE_SOP.md",
+    "SOPs/UGC_APPROVAL_PACKET_SOP.md",
+    "SOPs/UGC_CHECKLIST_SOP.md",
+    "SOPs/UGC_CLARIFY_INTENT_SOP.md",
+    "SOPs/UGC_COMMIT_DEPLOY_PUSH_GUARDRAILS_SOP.md",
+    "SOPs/UGC_ENGINEERING_SIMPLICITY_SOP.md",
+    "SOPs/UGC_GOVERNANCE_CHANGE_SOP.md",
+    "SOPs/UGC_ORCHESTRATION_SOP.md",
+    "SOPs/UGC_PORTABILITY_SOP.md",
+    "SOPs/UGC_RELEASE_SOP.md",
+    "SOPs/UGC_REPOSCAN_AND_BOOTSTRAP_SOP.md",
+    "SOPs/UGC_REPOSITORY_EXPLAINABILITY_AND_DOC_SYNC_SOP.md",
+    "SOPs/UGC_REPOSITORY_EXPLAINABILITY_SOP.md",
+    "SOPs/UGC_WORKLOG_AND_SESSION_SOP.md",
+    "SOPs/UGC_WORKLOG_SYNC_SKILL.md",
+    "SOPs/UGC_WORKTREE_DISCIPLINE_SOP.md"
+  ],
+  "updated": [],
+  "unchanged": [],
+  "skipped_local_edits": [],
+  "skipped_unverified_legacy": [],
+  "failed": []
+}

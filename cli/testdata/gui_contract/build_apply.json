@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "dry_run": false,
+  "has_blockers": false,
+  "items": [
+    {
+      "path": ".agents/AGENTS.md",
+      "status": "managed-overwrite",
+      "reason": "existing file contains UGC source-hash marker"
+    },
+    {
+      "path": ".agents/skills/readme/SKILL.md",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".agents/skills/ugc-governance/SKILL.md",
+      "status": "managed-overwrite",
+      "reason": "existing file contains UGC source-hash marker"
+    },
+    {
+      "path": ".agents/skills/ugc-test-sop/SKILL.md",
+      "status": "managed-overwrite",
+      "reason": "existing file matches prior build manifest"
+    },
+    {
+      "path": ".claude/settings.json",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".codex/config.toml",
+      "status": "managed-overwrite",
+      "reason": "existing file contains UGC source-hash marker"
+    },
+    {
+      "path": ".codex/rules/ugc.rules",
+      "status": "managed-overwrite",
+      "reason": "existing file contains UGC source-hash marker"
+    },
+    {
+      "path": ".cursor/hooks.json",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".cursor/hooks/ugc-deny.sh",
+      "status": "managed-overwrite",
+      "reason": "existing file contains UGC source-hash marker"
+    },
+    {
+      "path": ".cursorrules",
+      "status": "managed-overwrite",
+      "reason": "existing file contains UGC source-hash marker"
+    },
+    {
+      "path": "AGENTS.md",
+      "status": "managed-overwrite",
+      "reason": "existing file contains UGC source-hash marker"
+    },
+    {
+      "path": "CLAUDE.md",
+      "status": "managed-overwrite",
+      "reason": "existing file contains UGC source-hash marker"
+    }
+  ],
+  "summary": {
+    "blocked-unmanaged": 0,
+    "create": 0,
+    "managed-overwrite": 9,
+    "unchanged": 3
+  }
+}

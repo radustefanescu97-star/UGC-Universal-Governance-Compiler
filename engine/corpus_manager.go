@@ -26,6 +26,7 @@ type CorpusState struct {
 }
 
 type UpdateSummary struct {
+	StateWarning            string
 	Created                 []string
 	Updated                 []string
 	Unchanged               []string
@@ -129,10 +130,17 @@ func atomicWriteFile(filename string, data []byte, perm os.FileMode) error {
 
 // UpdateCorpus performs drift detection and updates the local governance folder.
 func UpdateCorpus(dryRun bool) error {
-	return updateCorpus(dryRun, corpusUpdateIO{})
+	_, err := updateCorpus(dryRun, false, corpusUpdateIO{})
+	return err
 }
 
-func updateCorpus(dryRun bool, io corpusUpdateIO) error {
+// PlanCorpusUpdateDryRun previews corpus synchronization without writing files or human output.
+func PlanCorpusUpdateDryRun() (UpdateSummary, error) {
+	return updateCorpus(true, true, corpusUpdateIO{})
+}
+
+func updateCorpus(dryRun bool, quiet bool, io corpusUpdateIO) (UpdateSummary, error) {
+	summary := UpdateSummary{}
 	if io.writeFileAtomic == nil {
 		io.writeFileAtomic = atomicWriteFile
 	}
@@ -142,7 +150,7 @@ func updateCorpus(dryRun bool, io corpusUpdateIO) error {
 
 	if !dryRun {
 		if err := os.MkdirAll(GovernanceDir, 0755); err != nil {
-			return err
+			return summary, err
 		}
 	}
 
@@ -152,15 +160,19 @@ func updateCorpus(dryRun bool, io corpusUpdateIO) error {
 	case stateErr == nil:
 	case errors.Is(stateErr, ErrStateMissing):
 		stateTrusted = false
-		fmt.Println("State: missing .state.json; existing changed files will be treated as unverified legacy.")
+		summary.StateWarning = "State: missing .state.json; existing changed files will be treated as unverified legacy."
+		if !quiet {
+			fmt.Println(summary.StateWarning)
+		}
 	case errors.Is(stateErr, ErrStateLegacy):
 		stateTrusted = false
-		fmt.Println("State: legacy .state.json schema; existing changed files will be treated as unverified legacy.")
+		summary.StateWarning = "State: legacy .state.json schema; existing changed files will be treated as unverified legacy."
+		if !quiet {
+			fmt.Println(summary.StateWarning)
+		}
 	default:
-		return stateErr
+		return summary, stateErr
 	}
-
-	summary := UpdateSummary{}
 
 	err := fs.WalkDir(core_embed.StandardCorpus, "standard_corpus", func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
@@ -193,7 +205,9 @@ func updateCorpus(dryRun bool, io corpusUpdateIO) error {
 				state.Hashes[relPath] = embedHash
 			}
 			summary.Created = append(summary.Created, relPath)
-			fmt.Printf("[NEW] %s\n", localPath)
+			if !quiet {
+				fmt.Printf("[NEW] %s\n", localPath)
+			}
 			return nil
 		}
 
@@ -228,7 +242,9 @@ func updateCorpus(dryRun bool, io corpusUpdateIO) error {
 				state.Hashes[relPath] = embedHash
 			}
 			summary.Updated = append(summary.Updated, relPath)
-			fmt.Printf("[UPDATED] %s\n", localPath)
+			if !quiet {
+				fmt.Printf("[UPDATED] %s\n", localPath)
+			}
 		} else {
 			summary.SkippedLocalEdits = append(summary.SkippedLocalEdits, relPath)
 		}
@@ -237,15 +253,23 @@ func updateCorpus(dryRun bool, io corpusUpdateIO) error {
 	})
 
 	if err != nil {
-		return err
+		return summary, err
 	}
 
 	if !dryRun {
 		if err := io.saveState(state); err != nil {
-			return err
+			return summary, err
 		}
 	}
 
+	if !quiet {
+		printUpdateCorpusHuman(summary, dryRun)
+	}
+
+	return summary, nil
+}
+
+func printUpdateCorpusHuman(summary UpdateSummary, dryRun bool) {
 	if dryRun {
 		fmt.Printf("Dry run complete: %d created, %d updated, %d unchanged, %d skipped-local-edits, %d skipped-unverified-legacy, %d failed.\n",
 			len(summary.Created), len(summary.Updated), len(summary.Unchanged), len(summary.SkippedLocalEdits), len(summary.SkippedUnverifiedLegacy), len(summary.Failed))
@@ -266,6 +290,4 @@ func updateCorpus(dryRun bool, io corpusUpdateIO) error {
 			fmt.Printf("- %s\n", f)
 		}
 	}
-
-	return nil
 }

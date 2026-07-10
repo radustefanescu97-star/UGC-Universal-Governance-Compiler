@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "dry_run": true,
+  "has_blockers": false,
+  "items": [
+    {
+      "path": ".agents/AGENTS.md",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".agents/skills/readme/SKILL.md",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".agents/skills/ugc-governance/SKILL.md",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".agents/skills/ugc-test-sop/SKILL.md",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".claude/settings.json",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".codex/config.toml",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".codex/rules/ugc.rules",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".cursor/hooks.json",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".cursor/hooks/ugc-deny.sh",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": ".cursorrules",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": "AGENTS.md",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    },
+    {
+      "path": "CLAUDE.md",
+      "status": "unchanged",
+      "reason": "target file already matches generated output"
+    }
+  ],
+  "summary": {
+    "blocked-unmanaged": 0,
+    "create": 0,
+    "managed-overwrite": 0,
+    "unchanged": 12
+  }
+}

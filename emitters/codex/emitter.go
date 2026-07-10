@@ -13,7 +13,7 @@ import (
 type Emitter struct{}
 
 func (e *Emitter) Emit(g *models.Governance, targetDir string) error {
-	fmt.Println("Emitting Codex configuration...")
+	fmt.Fprintln(os.Stderr, "Emitting Codex configuration...")
 
 	var content strings.Builder
 	content.WriteString(fmt.Sprintf("<!-- UGC-Source-Hash: %s -->\n\n", g.SourceHash))

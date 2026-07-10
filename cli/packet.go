@@ -1,13 +1,28 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/universal-governance/ugc/engine"
 )
+
+const packetVerifyJSONSchemaVersion = 1
+
+var packetVerifyJSON bool
+
+type packetVerifyJSONOutput struct {
+	SchemaVersion int      `json:"schema_version"`
+	OK            bool     `json:"ok"`
+	TaskID        string   `json:"task_id,omitempty"`
+	PacketPath    string   `json:"packet_path,omitempty"`
+	SHA256        string   `json:"sha256,omitempty"`
+	Reasons       []string `json:"reasons"`
+}
 
 var packetNewTaskID string
 var packetNewPath string
@@ -80,13 +95,24 @@ var packetHashCmd = &cobra.Command{
 var packetVerifyCmd = &cobra.Command{
 	Use:   "verify",
 	Short: "Verify a hash-bound approval sentence",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if packetVerifyPath == "" || packetVerifyApproval == "" {
-			fmt.Fprintln(os.Stderr, "packet verify requires --packet and --approval")
-			os.Exit(1)
+			return fmt.Errorf("packet verify requires --packet and --approval")
 		}
 
 		result := engine.VerifyApprovalPacket(packetVerifyPath, packetVerifyApproval)
+		out := cmd.OutOrStdout()
+
+		if packetVerifyJSON {
+			if err := printPacketVerifyJSON(out, result); err != nil {
+				return err
+			}
+			if !result.OK {
+				return fmt.Errorf("approval verification failed")
+			}
+			return nil
+		}
+
 		if !result.OK {
 			fmt.Fprintln(os.Stderr, "Approval verification failed:")
 			for _, reason := range result.Reasons {
@@ -95,11 +121,37 @@ var packetVerifyCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		fmt.Println("Approval verification passed.")
-		fmt.Printf("Task ID: %s\n", result.TaskID)
-		fmt.Printf("Packet Path: %s\n", result.PacketPath)
-		fmt.Printf("Packet SHA256: %s\n", result.SHA256)
+		fmt.Fprintln(out, "Approval verification passed.")
+		fmt.Fprintf(out, "Task ID: %s\n", result.TaskID)
+		fmt.Fprintf(out, "Packet Path: %s\n", result.PacketPath)
+		fmt.Fprintf(out, "Packet SHA256: %s\n", result.SHA256)
+		return nil
 	},
+}
+
+func buildPacketVerifyJSON(result engine.ApprovalVerification) packetVerifyJSONOutput {
+	reasons := result.Reasons
+	if reasons == nil {
+		reasons = []string{}
+	}
+	payload := packetVerifyJSONOutput{
+		SchemaVersion: packetVerifyJSONSchemaVersion,
+		OK:            result.OK,
+		Reasons:       reasons,
+	}
+	if result.OK {
+		payload.TaskID = result.TaskID
+		payload.PacketPath = result.PacketPath
+		payload.SHA256 = result.SHA256
+	}
+	return payload
+}
+
+func printPacketVerifyJSON(out io.Writer, result engine.ApprovalVerification) error {
+	payload := buildPacketVerifyJSON(result)
+	enc := json.NewEncoder(out)
+	enc.SetIndent("", "  ")
+	return enc.Encode(payload)
 }
 
 func init() {
@@ -110,6 +162,7 @@ func init() {
 	packetNewCmd.Flags().BoolVar(&packetNewDryRun, "dry-run", false, "Print the packet template without writing it")
 	packetVerifyCmd.Flags().StringVar(&packetVerifyPath, "packet", "", "Approval packet path")
 	packetVerifyCmd.Flags().StringVar(&packetVerifyApproval, "approval", "", "Approval sentence to verify")
+	packetVerifyCmd.Flags().BoolVar(&packetVerifyJSON, "json", false, "Print machine-readable verification result")
 
 	packetCmd.AddCommand(packetNewCmd)
 	packetCmd.AddCommand(packetHashCmd)

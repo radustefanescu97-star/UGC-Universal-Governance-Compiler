@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "ok": true,
+  "task_id": "UGC-TEST-001",
+  "packet_path": "Plans/UGC_Test_Packet.md",
+  "sha256": "e955addc561bec074be11f735b4c02c837cbb29c0b956d431d350153b9be6f34",
+  "reasons": []
+}

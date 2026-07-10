@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "binary_version": "dev",
+  "corpus_version": "1.0.0",
+  "go_version": "go1.26.4",
+  "platform": "linux/amd64",
+  "latest_release": null,
+  "update_available": null
+}

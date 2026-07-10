@@ -22,7 +22,7 @@ const (
 type Emitter struct{}
 
 func (e *Emitter) Emit(g *models.Governance, targetDir string) error {
-	fmt.Println("Emitting Cursor configuration...")
+	fmt.Fprintln(os.Stderr, "Emitting Cursor configuration...")
 
 	var content string
 	content += fmt.Sprintf("// %s: %s\n\n", sourceHashMarker, g.SourceHash)

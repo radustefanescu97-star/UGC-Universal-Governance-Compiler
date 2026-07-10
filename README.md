@@ -81,38 +81,38 @@ The following are intentionally not part of V1:
 
 ## Install
 
-UGC v1.0.8 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.8 release, then verify it with `ugc_1.0.8_checksums.txt`.
+UGC v1.0.9 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.9 release, then verify it with `ugc_1.0.9_checksums.txt`.
 
-v1.0.8 adds `ugc version` and `ugc --version` for binary identity, `ugc version --json` for machine-readable version and corpus metadata, and a user-invoked GitHub release check with graceful offline degrade (`--no-check` skips network). Release binaries are stamped at build time. It retains Antigravity skill frontmatter fixes from v1.0.7, Cursor hook fixes from v1.0.6, Codex three-layer output from v1.0.5, English-first public wording from v1.0.4, Cursor deny hooks from v1.0.3, and minimal public GitHub Actions CI from v1.0.2.
+v1.0.9 adds machine-readable `--json` output for `ugc audit`, `ugc build` (including `--dry-run`), `ugc packet verify`, and `ugc update --dry-run` so GUI tools can consume CLI results without reimplementing engine logic; emitter progress goes to stderr so stdout stays a single JSON object. It publishes `docs/GUI_CONTRACT.md` as the canonical schema reference. It retains `ugc version` / `ugc version --json` from v1.0.8, Antigravity skill frontmatter fixes from v1.0.7, Cursor hook fixes from v1.0.6, Codex three-layer output from v1.0.5, English-first public wording from v1.0.4, Cursor deny hooks from v1.0.3, and minimal public GitHub Actions CI from v1.0.2.
 
 Available archives:
 
-- `ugc_1.0.8_linux_amd64.tar.gz`
-- `ugc_1.0.8_linux_arm64.tar.gz`
-- `ugc_1.0.8_darwin_amd64.tar.gz`
-- `ugc_1.0.8_darwin_arm64.tar.gz`
-- `ugc_1.0.8_windows_amd64.zip`
+- `ugc_1.0.9_linux_amd64.tar.gz`
+- `ugc_1.0.9_linux_arm64.tar.gz`
+- `ugc_1.0.9_darwin_amd64.tar.gz`
+- `ugc_1.0.9_darwin_arm64.tar.gz`
+- `ugc_1.0.9_windows_amd64.zip`
 
 macOS binaries are cross-compiled and are not signed or notarized.
 
 Linux/macOS example:
 
 ```bash
-tar -xzf ugc_1.0.8_linux_amd64.tar.gz
-./ugc_1.0.8_linux_amd64/ugc --help
+tar -xzf ugc_1.0.9_linux_amd64.tar.gz
+./ugc_1.0.9_linux_amd64/ugc --help
 ```
 
 Windows PowerShell example:
 
 ```powershell
-Expand-Archive .\ugc_1.0.8_windows_amd64.zip
-.\ugc_1.0.8_windows_amd64\ugc.exe --help
+Expand-Archive .\ugc_1.0.9_windows_amd64.zip
+.\ugc_1.0.9_windows_amd64\ugc.exe --help
 ```
 
 Checksum verification on systems with `sha256sum`:
 
 ```bash
-sha256sum -c ugc_1.0.8_checksums.txt
+sha256sum -c ugc_1.0.9_checksums.txt
 ```
 
 Source build remains available.
@@ -173,19 +173,19 @@ Bootstraps `.universal-governance/` with the embedded standard corpus.
 ugc build --dry-run
 ```
 
-Shows the generated write plan without modifying files.
+Shows the generated write plan without modifying files. Use `--json` for a machine-readable dry-run plan on stdout.
 
 ```bash
 ugc build
 ```
 
-Compiles governance into supported target files. UGC refuses to overwrite unmanaged existing target files, applies generated artifacts through a local transaction where possible, and writes the build manifest last.
+Compiles governance into supported target files. UGC refuses to overwrite unmanaged existing target files, applies generated artifacts through a local transaction where possible, and writes the build manifest last. Use `--json` for machine-readable apply results on stdout.
 
 ```bash
 ugc audit
 ```
 
-Checks whether generated artifacts still match the current governance source and reports target capability coverage.
+Checks whether generated artifacts still match the current governance source and reports target capability coverage. Use `--json` for a single machine-readable audit report on stdout (see `docs/GUI_CONTRACT.md`).
 
 ```bash
 ugc version
@@ -205,13 +205,15 @@ ugc packet hash
 ugc packet verify
 ```
 
-Creates, hashes, and verifies local approval packet text. Packet verification checks literal approval fields, the declared packet path, and the current SHA-256 hash.
+Creates, hashes, and verifies local approval packet text. Packet verification checks literal approval fields, the declared packet path, and the current SHA-256 hash. Use `--json` with `ugc packet verify` for machine-readable verification output on stdout.
 
 ```bash
 ugc update --dry-run
 ```
 
-Previews standard corpus updates without writing files.
+Previews standard corpus updates without writing files. Use `--json` for a machine-readable update preview on stdout.
+
+Machine-readable JSON shapes for GUI consumers are documented in `docs/GUI_CONTRACT.md`.
 
 ## Approval Packets And SHA-256
 

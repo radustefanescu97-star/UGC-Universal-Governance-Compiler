@@ -221,6 +221,18 @@ ugc version --no-check
 
 `--json` emits machine-readable fields for GUI/engine handshake. The default command may check GitHub for a newer release; `--no-check` skips network access entirely.
 
+## GUI JSON Contract
+
+Phase 0 GUI-readiness surfaces emit a single JSON object on stdout when `--json` is used. Progress and errors go to stderr. Canonical shapes are documented in `docs/GUI_CONTRACT.md`.
+
+Supported JSON surfaces:
+
+- `ugc audit --json`
+- `ugc build --json` and `ugc build --dry-run --json`
+- `ugc packet verify --json`
+- `ugc update --dry-run --json`
+- `ugc version --json` (from v1.0.8)
+
 ## Corpus Updates
 
 `ugc update --dry-run` previews what would change if the embedded standard corpus is synchronized into the local repository corpus.

@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "audit_passed": true,
+  "source_valid": true,
+  "source_errors": [],
+  "source_hash": "b836d19e04013ebff2285e382f0e5407351b5a738f7eca2271f556644a4a734a",
+  "drift": [],
+  "unexpected_artifacts": [],
+  "manifest_findings": [],
+  "corpus_state": "missing",
+  "corpus_state_message": "missing .state.json (legacy/unverified)",
+  "capability_coverage": {
+    "approval_gates": {
+      "antigravity": "instructed",
+      "claude": "constrained",
+      "codex": "constrained",
+      "cursor": "constrained"
+    },
+    "destructive_action_warnings": {
+      "antigravity": "instructed",
+      "claude": "constrained",
+      "codex": "constrained",
+      "cursor": "constrained"
+    },
+    "protected_surfaces": {
+      "antigravity": "instructed",
+      "claude": "constrained",
+      "codex": "constrained",
+      "cursor": "constrained"
+    },
+    "secret_read_protection": {
+      "antigravity": "advisory",
+      "claude": "constrained",
+      "codex": "advisory",
+      "cursor": "constrained"
+    },
+    "stop_conditions": {
+      "antigravity": "instructed",
+      "claude": "constrained",
+      "codex": "constrained",
+      "cursor": "constrained"
+    },
+    "worklog_duty": {
+      "antigravity": "native-skill",
+      "claude": "instructed",
+      "codex": "native-skill",
+      "cursor": "instructed"
+    }
+  },
+  "expected_artifacts": [
+    ".agents/AGENTS.md",
+    ".agents/skills/readme/SKILL.md",
+    ".agents/skills/ugc-governance/SKILL.md",
+    ".agents/skills/ugc-test-sop/SKILL.md",
+    ".claude/settings.json",
+    ".codex/config.toml",
+    ".codex/rules/ugc.rules",
+    ".cursor/hooks.json",
+    ".cursor/hooks/ugc-deny.sh",
+    ".cursorrules",
+    "AGENTS.md",
+    "CLAUDE.md"
+  ]
+}
