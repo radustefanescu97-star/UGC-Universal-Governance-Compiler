@@ -81,38 +81,38 @@ The following are intentionally not part of V1:
 
 ## Install
 
-UGC v1.0.7 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.7 release, then verify it with `ugc_1.0.7_checksums.txt`.
+UGC v1.0.8 provides prebuilt GitHub Release archives for Linux, macOS, and Windows. Choose the archive for your OS and CPU architecture from the v1.0.8 release, then verify it with `ugc_1.0.8_checksums.txt`.
 
-v1.0.7 makes generated `.agents/skills/*/SKILL.md` files valid Agent Skill markdown so Codex no longer warns about skipped Antigravity SOP skill files. It retains the Cursor hook fixes from v1.0.6, Codex three-layer output from v1.0.5, English-first public wording from v1.0.4, Cursor deny hooks from v1.0.3, and minimal public GitHub Actions CI from v1.0.2.
+v1.0.8 adds `ugc version` and `ugc --version` for binary identity, `ugc version --json` for machine-readable version and corpus metadata, and a user-invoked GitHub release check with graceful offline degrade (`--no-check` skips network). Release binaries are stamped at build time. It retains Antigravity skill frontmatter fixes from v1.0.7, Cursor hook fixes from v1.0.6, Codex three-layer output from v1.0.5, English-first public wording from v1.0.4, Cursor deny hooks from v1.0.3, and minimal public GitHub Actions CI from v1.0.2.
 
 Available archives:
 
-- `ugc_1.0.7_linux_amd64.tar.gz`
-- `ugc_1.0.7_linux_arm64.tar.gz`
-- `ugc_1.0.7_darwin_amd64.tar.gz`
-- `ugc_1.0.7_darwin_arm64.tar.gz`
-- `ugc_1.0.7_windows_amd64.zip`
+- `ugc_1.0.8_linux_amd64.tar.gz`
+- `ugc_1.0.8_linux_arm64.tar.gz`
+- `ugc_1.0.8_darwin_amd64.tar.gz`
+- `ugc_1.0.8_darwin_arm64.tar.gz`
+- `ugc_1.0.8_windows_amd64.zip`
 
 macOS binaries are cross-compiled and are not signed or notarized.
 
 Linux/macOS example:
 
 ```bash
-tar -xzf ugc_1.0.7_linux_amd64.tar.gz
-./ugc_1.0.7_linux_amd64/ugc --help
+tar -xzf ugc_1.0.8_linux_amd64.tar.gz
+./ugc_1.0.8_linux_amd64/ugc --help
 ```
 
 Windows PowerShell example:
 
 ```powershell
-Expand-Archive .\ugc_1.0.7_windows_amd64.zip
-.\ugc_1.0.7_windows_amd64\ugc.exe --help
+Expand-Archive .\ugc_1.0.8_windows_amd64.zip
+.\ugc_1.0.8_windows_amd64\ugc.exe --help
 ```
 
 Checksum verification on systems with `sha256sum`:
 
 ```bash
-sha256sum -c ugc_1.0.7_checksums.txt
+sha256sum -c ugc_1.0.8_checksums.txt
 ```
 
 Source build remains available.
@@ -186,6 +186,12 @@ ugc audit
 ```
 
 Checks whether generated artifacts still match the current governance source and reports target capability coverage.
+
+```bash
+ugc version
+```
+
+Prints binary version, embedded corpus version, and Go runtime/platform information. Use `--json` for machine-readable output. By default, checks GitHub for a newer release; use `--no-check` to skip network access.
 
 ```bash
 ugc build --restore <PATH>

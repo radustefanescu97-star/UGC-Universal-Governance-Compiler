@@ -209,6 +209,18 @@ Approval packets are markdown documents that can define:
 
 This is local discipline, not identity signing or remote authorization.
 
+## Version Identity
+
+`ugc version` reports the binary version, embedded corpus version, and Go runtime/platform. `ugc --version` prints the binary version via the root CLI flag.
+
+```bash
+ugc version
+ugc version --json
+ugc version --no-check
+```
+
+`--json` emits machine-readable fields for GUI/engine handshake. The default command may check GitHub for a newer release; `--no-check` skips network access entirely.
+
 ## Corpus Updates
 
 `ugc update --dry-run` previews what would change if the embedded standard corpus is synchronized into the local repository corpus.
